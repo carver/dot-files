@@ -5,6 +5,7 @@ screen -t git
 screen -t bash
 screen -t etc_config
 screen -t mysql
+screen -t phpsh
 screen -t scp
 
 # Skip the startup message
