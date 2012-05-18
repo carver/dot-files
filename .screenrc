@@ -1,0 +1,27 @@
+screen -t logs
+screen -t profiling
+screen -t repo_edit
+screen -t git
+screen -t bash
+screen -t etc_config
+screen -t mysql
+screen -t scp
+
+# Skip the startup message
+startup_message off
+
+# Display a caption string below, appearing like tabs and
+# displaying the window number and application name (by default).
+caption always
+#caption string "%{kw}%-w%{wr}%n %t%{-}%+w"
+caption string "%{.bW}%-w%{.rW}%n %t%{-}%+w %=%{..G} %H %{..Y} %m/%d %C%a "
+
+# Special keys. C-a m will spawn Mutt, for example, on window 7 (if it
+# is available), or the next available window.
+#bind m screen -t 'Mutt'    7 mutt
+
+# Sets C-\ as shortcut key instead of C-A
+escape ^Tt
+# (If you are wondering, \034 is the key sequence C-\ in octal. Please
+# read the documentation for `escape' in the screen man page to find out
+# how I arrived at that).
