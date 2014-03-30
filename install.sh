@@ -1,4 +1,7 @@
 #!/bin/bash
 
-ln -s $( readlink -f $( dirname "$0"))/.screenrc ~/.screenrc 
+DOTFILE_REPO="$( readlink -f $( dirname "$0"))"
+
+ln -s $DOTFILE_REPO/.screenrc ~/.screenrc
+ln -s $DOTFILE_REPO/.vimrc ~/.vimrc
 
