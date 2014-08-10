@@ -1,0 +1,2 @@
+pythonpy
+virtualenvwrapper
