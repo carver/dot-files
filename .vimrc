@@ -10,6 +10,11 @@ set encoding=utf-8
 inoremap jk <ESC>
 vnoremap . :norm.<CR>
 
+"Load vim-plug
+if empty(glob("~/.vim/autoload/plug.vim"))
+    execute '!curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.github.com/junegunn/vim-plug/master/plug.vim'
+endif
+
 " Use tabs in golang source files
 au BufNewFile,BufRead *.go setlocal noet ts=4 sw=4 sts=4
 
