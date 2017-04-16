@@ -21,5 +21,8 @@ au BufNewFile,BufRead *.go setlocal noet ts=4 sw=4 sts=4
 " Highlight golang syntax
 set rtp+=$GOROOT/misc/vim
 
+" Switch tabs to 2 spaces for html/javascript
+au BufNewFile,BufRead *.{html,js,jsx} setlocal sw=2 sts=2 et
+
 " Reload vim config after every file write
 au BufWritePost ~/.vimrc :source ~/.vimrc
