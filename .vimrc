@@ -26,3 +26,10 @@ au BufNewFile,BufRead *.{html,js,jsx} setlocal sw=2 sts=2 et
 
 " Reload vim config after every file write
 au BufWritePost ~/.vimrc :source ~/.vimrc
+
+" Load vim-plug plugins
+call plug#begin()
+
+Plug 'tomlion/vim-solidity'
+
+call plug#end()
