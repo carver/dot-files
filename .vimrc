@@ -27,6 +27,10 @@ au BufNewFile,BufRead *.{html,js,jsx} setlocal sw=2 sts=2 et
 " Reload vim config after every file write
 au BufWritePost ~/.vimrc :source ~/.vimrc
 
+" Highlight characters past 80
+highlight OverLength ctermbg=darkred ctermfg=white guibg=#592929
+match OverLength /\%101v.\+/
+
 " Load vim-plug plugins
 call plug#begin()
 
