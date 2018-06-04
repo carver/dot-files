@@ -72,3 +72,6 @@ set clipboard=unnamed " Default to system clipboard.
 
 " Set 7 line buffer around cursor
 set so=7
+
+" Auto-wrap text at 100 characters
+setlocal formatoptions+=t textwidth=100
