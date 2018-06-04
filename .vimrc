@@ -37,6 +37,7 @@ call plug#begin()
 
 Plug 'tomlion/vim-solidity'
 Plug 'vim-syntastic/syntastic'
+Plug 'ctrlpvim/ctrlp.vim'
 
 call plug#end()
 
