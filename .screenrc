@@ -1,12 +1,10 @@
+screen -t execute
 screen -t logs
-screen -t profiling
 screen -t repo_edit
 screen -t git
-screen -t bash
-screen -t etc_config
-screen -t mysql
-screen -t phpsh
-screen -t scp
+screen -t ipython
+screen -t htop
+screen -t apt
 
 # Skip the startup message
 startup_message off
