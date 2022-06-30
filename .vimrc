@@ -55,6 +55,9 @@ let g:syntastic_python_flake8_args = "--ignore=E501"
 " Remove trailing whitespace on save
 autocmd BufWritePre *.py :%s/\s\+$//e
 
+" Ignore rust build folders in Ctrl-P
+set wildignore+=*/target/*
+
 " The Silver Searcher
 if executable('ag')
   " Use ag over grep
