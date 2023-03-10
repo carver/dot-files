@@ -15,3 +15,5 @@ mkdir -p ~/.ssh
 cat $DOTFILE_REPO/authorized_keys >>~/.ssh/authorized_keys
 sudo apt-get update
 sudo apt-get install -y python3-pip-whl vim curl screen openssh-server
+echo "Manually set default editor to vim.basic now:"
+sudo update-alternatives --config editor
