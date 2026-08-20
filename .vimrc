@@ -38,8 +38,34 @@ call plug#begin()
 Plug 'tomlion/vim-solidity'
 Plug 'vim-syntastic/syntastic'
 Plug 'ctrlpvim/ctrlp.vim'
+if has('nvim')
+  " In-buffer markdown rendering (neovim only, uses built-in treesitter parsers)
+  Plug 'MeanderingProgrammer/render-markdown.nvim'
+endif
 
 call plug#end()
+
+" render-markdown.nvim (neovim only)
+"   :RenderMarkdown toggle   - rendered view in-place (raw on cursor line / insert mode)
+"   :RenderMarkdown preview  - side-by-side: raw on left, rendered on right
+"   <leader>m / <leader>M    - shortcuts for the above
+if has('nvim')
+lua << LUA
+  local ok, rm = pcall(require, 'render-markdown')
+  if ok then
+    rm.setup({
+      -- render in normal/command modes; show raw text while in insert mode
+      render_modes = { 'n', 'c', 't' },
+      -- plain markers so it still looks fine without a Nerd Font installed
+      heading = { icons = { '# ', '## ', '### ', '#### ', '##### ', '###### ' } },
+      checkbox = { unchecked = { icon = '[ ]' }, checked = { icon = '[x]' } },
+      code = { language_icon = false },
+    })
+  end
+LUA
+endif
+nnoremap <leader>m :RenderMarkdown toggle<CR>
+nnoremap <leader>M :RenderMarkdown preview<CR>
 
 " Shows document path and title in the terminal title
 set title
