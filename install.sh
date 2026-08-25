@@ -84,5 +84,10 @@ sudo apt-get update
 sudo apt-get install -y python3-pip-whl neovim curl openssh-server flake8 xclip wl-clipboard
 # Install/refresh vim-plug plugins non-interactively
 nvim --headless +'PlugInstall --sync' +qall
+# rust-analyzer for neovim's rust LSP. rustup is per-user, so there's no apt package;
+# skip quietly on machines without rust.
+if command -v rustup >/dev/null 2>&1; then
+  rustup component add rust-analyzer rust-src || echo "warning: could not install rust-analyzer" >&2
+fi
 # nano outranks nvim in the alternatives priorities, so pick nvim explicitly
 sudo update-alternatives --set editor /usr/bin/nvim

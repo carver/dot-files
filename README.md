@@ -29,3 +29,6 @@ bootstrapped by `init.vim` on first launch.
   built-in diagnostics; `:Errors` lists them
 - `render-markdown.nvim` – `<leader>m` toggles in-place rendering, `<leader>M` a side-by-side preview
 - `vim-solidity` – syntax highlighting
+- rust: `rust-analyzer` via the built-in LSP client, no plugin. `<C-]>`/`gd` definition, `K` hover,
+  `grr`/`grn`/`gra` references/rename/code action (0.11+). Needs
+  `rustup component add rust-analyzer rust-src` (install.sh does it when rustup exists).
