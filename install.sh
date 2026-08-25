@@ -1,5 +1,6 @@
 #!/bin/bash
-# Idempotent: safe to re-run after pulling changes.
+# Idempotent: safe to re-run after pulling changes. Also run inside sbx sandboxes
+# by sandbox-setup/setup.py, so it must cope with a home directory it didn't set up.
 
 set -o errexit
 set -o pipefail
@@ -35,6 +36,24 @@ unlink_stale() {
   fi
 }
 
+# ---- bash ------------------------------------------------------------------
+# The repo .bashrc sources ~/.bashrc.local last, so a machine's existing
+# .bashrc is kept there instead of being backed up into oblivion. An untouched
+# Ubuntu default has nothing worth keeping.
+if [ -f ~/.bashrc ] && [ ! -L ~/.bashrc ]; then
+  if [ -f /etc/skel/.bashrc ] && cmp -s ~/.bashrc /etc/skel/.bashrc; then
+    rm ~/.bashrc
+  elif [ -e ~/.bashrc.local ]; then
+    echo "error: ~/.bashrc is not managed yet and ~/.bashrc.local already exists; merge them by hand" >&2
+    exit 1
+  else
+    mv ~/.bashrc ~/.bashrc.local
+    echo "moved existing ~/.bashrc to ~/.bashrc.local (sourced at the end of the repo .bashrc);"
+    echo "  delete from it whatever the repo .bashrc now covers"
+  fi
+fi
+link "$DOTFILE_REPO/.bashrc" ~/.bashrc
+link "$DOTFILE_REPO/.bash_aliases" ~/.bash_aliases
 link "$DOTFILE_REPO/.inputrc" ~/.inputrc
 
 # ---- neovim ----------------------------------------------------------------
