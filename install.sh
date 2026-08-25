@@ -7,20 +7,49 @@ set -o nounset
 
 DOTFILE_REPO="$( readlink -f "$( dirname "$0")")"
 
-# link SRC DEST: create/refresh a symlink, but never clobber a real file or dir.
+# link SRC DEST: create/refresh a symlink. A real file already at DEST is moved
+# to DEST.bak first (never overwriting an earlier backup).
 link() {
   local src="$1" dest="$2"
   if [ -e "$dest" ] && [ ! -L "$dest" ]; then
-    echo "error: $dest exists and is not a symlink; move it aside first" >&2
-    return 1
+    if [ -e "$dest.bak" ]; then
+      echo "error: $dest is not a symlink and $dest.bak already exists; sort them out by hand" >&2
+      return 1
+    fi
+    mv "$dest" "$dest.bak"
+    echo "moved existing $dest to $dest.bak"
   fi
   ln -sfn "$src" "$dest"
 }
 
+# unlink_stale DEST: remove a symlink left behind by an older version of this
+# script, i.e. one that is dangling or that points into this repo.
+unlink_stale() {
+  local dest="$1"
+  [ -L "$dest" ] || return 0
+  local target
+  target="$(readlink -f "$dest" || true)"
+  if [ ! -e "$dest" ] || [[ "$target" == "$DOTFILE_REPO"/* ]]; then
+    rm "$dest"
+    echo "removed stale link $dest"
+  fi
+}
+
 link "$DOTFILE_REPO/.inputrc" ~/.inputrc
+
+# ---- neovim ----------------------------------------------------------------
 mkdir -p ~/.config
 link "$DOTFILE_REPO/nvim" ~/.config/nvim
 
+# Leftovers from when this repo managed vim and screen (commit 7e9e29d and earlier).
+unlink_stale ~/.vimrc
+unlink_stale ~/.vim/ftplugin
+unlink_stale ~/.screenrc
+if [ -e ~/.vim ] || [ -e ~/.viminfo ]; then
+  echo "note: vim is no longer managed here; its old plugins and state can go:  rm -rf ~/.vim ~/.viminfo"
+fi
+
+# ---- ssh -------------------------------------------------------------------
 # Append only the keys that aren't already present.
 mkdir -p ~/.ssh
 touch ~/.ssh/authorized_keys
@@ -29,9 +58,12 @@ while IFS= read -r key; do
   grep -qxF -- "$key" ~/.ssh/authorized_keys || echo "$key" >>~/.ssh/authorized_keys
 done <"$DOTFILE_REPO/authorized_keys"
 
+# ---- packages --------------------------------------------------------------
+# flake8: linter run by nvim-lint.  xclip + wl-clipboard: clipboard providers
+# for neovim's 'clipboard' option on X11 and Wayland respectively.
 sudo apt-get update
-# flake8: linter run by nvim-lint
-sudo apt-get install -y python3-pip-whl neovim curl openssh-server flake8
+sudo apt-get install -y python3-pip-whl neovim curl openssh-server flake8 xclip wl-clipboard
 # Install/refresh vim-plug plugins non-interactively
 nvim --headless +'PlugInstall --sync' +qall
+# nano outranks nvim in the alternatives priorities, so pick nvim explicitly
 sudo update-alternatives --set editor /usr/bin/nvim
