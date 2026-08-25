@@ -41,13 +41,18 @@ augroup vimrc
   execute 'autocmd BufWritePost' join(map(s:rc_paths, 'fnameescape(v:val)'), ',') 'source $MYVIMRC'
 augroup END
 
-"Load vim-plug
+" ---------------------------------------------------------------------------
+" Plugins (vim-plug). install.sh runs :PlugInstall; plug.vim itself is
+" bootstrapped here on first launch.
+" ---------------------------------------------------------------------------
 let s:plug = stdpath('data') . '/site/autoload/plug.vim'
 if empty(glob(s:plug))
-    execute '!curl -fLo ' . s:plug . ' --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  execute '!curl -fLo ' . shellescape(s:plug)
+        \ . ' --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  " neovim cached the runtimepath before site/autoload existed, so load it by hand this once
+  execute 'source' fnameescape(s:plug)
 endif
 
-" Load vim-plug plugins
 call plug#begin()
 
 Plug 'tomlion/vim-solidity'

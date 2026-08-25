@@ -31,6 +31,6 @@ done <"$DOTFILE_REPO/authorized_keys"
 
 sudo apt-get update
 sudo apt-get install -y python3-pip-whl neovim curl openssh-server
-# Install/refresh vim-plug plugins (render-markdown.nvim etc.) non-interactively
-nvim --headless +PlugInstall +qall
+# Install/refresh vim-plug plugins non-interactively
+nvim --headless +'PlugInstall --sync' +qall
 sudo update-alternatives --set editor /usr/bin/nvim
