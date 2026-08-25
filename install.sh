@@ -30,7 +30,8 @@ while IFS= read -r key; do
 done <"$DOTFILE_REPO/authorized_keys"
 
 sudo apt-get update
-sudo apt-get install -y python3-pip-whl neovim curl openssh-server
+# flake8: linter run by nvim-lint
+sudo apt-get install -y python3-pip-whl neovim curl openssh-server flake8
 # Install/refresh vim-plug plugins non-interactively
 nvim --headless +'PlugInstall --sync' +qall
 sudo update-alternatives --set editor /usr/bin/nvim
