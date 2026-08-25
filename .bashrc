@@ -78,7 +78,6 @@ fi
 # --- Toolchains that are slow to initialize or only make sense interactively
 if command -v rustc >/dev/null 2>&1; then
     export RUSTFLAGS="-D warnings"
-    export RUST_SRC_PATH="$(rustc --print sysroot)/lib/rustlib/src/rust/library/"
 fi
 
 export NVM_DIR="$HOME/.nvm"
