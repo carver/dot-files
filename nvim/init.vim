@@ -1,11 +1,12 @@
+" Neovim config, linked to ~/.config/nvim by install.sh.
+"
+" Not here because neovim already does them by default:
+"   syntax on, filetype plugin indent on, set encoding=utf-8, set incsearch
+
 :set expandtab tabstop=2 shiftwidth=2 softtabstop=2
 
-syntax on
 set background=dark
-filetype indent plugin on
-set encoding=utf-8
 
-:set incsearch
 :set smartcase
 
 inoremap jk <ESC>
@@ -19,12 +20,6 @@ endif
 
 " Use tabs in golang source files
 au BufNewFile,BufRead *.go setlocal noet ts=4 sw=4 sts=4
-
-" Highlight golang syntax
-set rtp+=$GOROOT/misc/vim
-
-" Switch tabs to 2 spaces for html/javascript
-au BufNewFile,BufRead *.{html,js,jsx} setlocal sw=2 sts=2 et
 
 " Reload config after every file write
 au BufWritePost $MYVIMRC :source $MYVIMRC
