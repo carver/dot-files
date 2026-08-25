@@ -17,7 +17,6 @@ link() {
   ln -sfn "$src" "$dest"
 }
 
-link "$DOTFILE_REPO/.screenrc" ~/.screenrc
 link "$DOTFILE_REPO/.inputrc" ~/.inputrc
 mkdir -p ~/.config
 link "$DOTFILE_REPO/nvim" ~/.config/nvim
