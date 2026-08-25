@@ -86,14 +86,14 @@ let g:syntastic_check_on_open = 1
 let g:syntastic_python_checkers = ['flake8']
 let g:syntastic_python_flake8_args = "--ignore=E501"
 
-" The Silver Searcher
+" ---- ctrlp / grep -----------------------------------------------------------
 if executable('ag')
-  " Use ag over grep
+  " The Silver Searcher: fast, respects .gitignore, so ctrlp needs no cache
   set grepprg=ag\ --nogroup\ --nocolor
-
-  " Use ag in CtrlP for listing files. Lightning fast and respects .gitignore
   let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
-
-  " ag is fast enough that CtrlP doesn't need to cache
+  let g:ctrlp_use_caching = 0
+elseif executable('rg')
+  set grepprg=rg\ --vimgrep
+  let g:ctrlp_user_command = 'rg %s --files --color=never'
   let g:ctrlp_use_caching = 0
 endif
