@@ -37,19 +37,25 @@ unlink_stale() {
 }
 
 # ---- bash ------------------------------------------------------------------
-# The repo .bashrc sources ~/.bashrc.local last, so a machine's existing
-# .bashrc is kept there instead of being backed up into oblivion. An untouched
-# Ubuntu default has nothing worth keeping.
+# A machine's existing .bashrc is kept as ~/.bashrc.noninteractive.local rather
+# than backed up into oblivion. The repo .bashrc sources that before its
+# interactive-only guard, so every line in it keeps running for every shell,
+# exactly as it did when it was ~/.bashrc -- the safe default if nobody acts on
+# the notice below. An untouched Ubuntu default has nothing worth keeping.
 if [ -f ~/.bashrc ] && [ ! -L ~/.bashrc ]; then
   if [ -f /etc/skel/.bashrc ] && cmp -s ~/.bashrc /etc/skel/.bashrc; then
     rm ~/.bashrc
-  elif [ -e ~/.bashrc.local ]; then
-    echo "error: ~/.bashrc is not managed yet and ~/.bashrc.local already exists; merge them by hand" >&2
+  elif [ -e ~/.bashrc.noninteractive.local ]; then
+    echo "error: ~/.bashrc is not managed yet and ~/.bashrc.noninteractive.local already exists;" >&2
+    echo "  merge them by hand" >&2
     exit 1
   else
-    mv ~/.bashrc ~/.bashrc.local
-    echo "moved existing ~/.bashrc to ~/.bashrc.local (sourced at the end of the repo .bashrc);"
-    echo "  delete from it whatever the repo .bashrc now covers"
+    mv ~/.bashrc ~/.bashrc.noninteractive.local
+    echo "moved existing ~/.bashrc to ~/.bashrc.noninteractive.local, which the repo .bashrc"
+    echo "  sources for every shell, interactive or not -- nothing stops running. To make"
+    echo "  non-interactive shells cheaper, delete from it whatever the repo .bashrc now"
+    echo "  covers (often: all of it) and move the interactive-only rest -- prompt, aliases,"
+    echo "  completions, slow toolchain init -- to ~/.bashrc.local, which is sourced last."
   fi
 fi
 link "$DOTFILE_REPO/.bashrc" ~/.bashrc

@@ -1,8 +1,10 @@
 # ~/.bashrc, linked from the dot-files repo by install.sh.
 # Machine-specific additions go in one of two files, neither of them in the repo:
 #   ~/.bashrc.noninteractive.local  sourced below, before the interactive-only guard,
-#                                   so it applies to `ssh host cmd`, scripts, etc. too
-#   ~/.bashrc.local                 sourced at the very end, interactive shells only
+#                                   so it applies to `ssh host cmd`, scripts, etc. too.
+#                                   The safe default: when in doubt, put it here.
+#   ~/.bashrc.local                 sourced at the very end, interactive shells only.
+#                                   For anything slow enough that a script shouldn't pay for it.
 
 # --- Cheap, always-useful environment (also for non-interactive shells, e.g. `ssh host cmd`)
 if command -v nvim >/dev/null 2>&1; then
