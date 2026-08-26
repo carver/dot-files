@@ -1,5 +1,8 @@
 # ~/.bashrc, linked from the dot-files repo by install.sh.
-# Machine-specific additions go in ~/.bashrc.local, which is sourced at the end.
+# Machine-specific additions go in one of two files, neither of them in the repo:
+#   ~/.bashrc.noninteractive.local  sourced below, before the interactive-only guard,
+#                                   so it applies to `ssh host cmd`, scripts, etc. too
+#   ~/.bashrc.local                 sourced at the very end, interactive shells only
 
 # --- Cheap, always-useful environment (also for non-interactive shells, e.g. `ssh host cmd`)
 if command -v nvim >/dev/null 2>&1; then
@@ -15,6 +18,13 @@ export PATH="$PATH:${GOPATH:-$HOME/go}/bin"
 # Don't let docker sbx cache the files locally, because I want to be able to edit them on the
 # host, and have the changes immediately visible. This has already bitten me once.
 export DOCKER_SANDBOXES_ENABLE_VIRTIOFS_CACHE=0
+
+# --- Machine-specific settings that every shell needs, interactive or not.
+# Sourced before the guard below, so non-interactive shells (`ssh host cmd`, scripts,
+# anything run by an editor or an agent) still get it.
+if [ -f ~/.bashrc.noninteractive.local ]; then
+    . ~/.bashrc.noninteractive.local
+fi
 
 # --- Everything below is for interactive shells only
 case $- in
@@ -97,7 +107,7 @@ if [ -x "$HOME/miniforge3/bin/conda" ]; then
     unset __conda_setup
 fi
 
-# --- Machine-specific settings that don't belong in the repo
+# --- Machine-specific settings for interactive shells only
 if [ -f ~/.bashrc.local ]; then
     . ~/.bashrc.local
 fi

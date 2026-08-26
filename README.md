@@ -5,7 +5,7 @@ Re-run it after pulling; it is idempotent.
 
 | File | Linked to | Notes |
 | --- | --- | --- |
-| `.bashrc` | `~/.bashrc` | Portable: every toolchain block is guarded by an existence check. Sources `~/.bashrc.local` last for machine-specific bits. |
+| `.bashrc` | `~/.bashrc` | Portable: every toolchain block is guarded by an existence check. Sources two machine-specific files that are not in the repo: `~/.bashrc.noninteractive.local` before the interactive-only guard, `~/.bashrc.local` last. |
 | `.bash_aliases` | `~/.bash_aliases` | Aliases and small functions (`..`, `mcd`, `n`, `serve`, `freq`, …). |
 | `.inputrc` | `~/.inputrc` | Case-insensitive tab completion. |
 | `nvim/` | `~/.config/nvim` | Neovim config (`init.vim`) and plugins via vim-plug. |
@@ -13,11 +13,23 @@ Re-run it after pulling; it is idempotent.
 
 `make-ctags.sh` builds a `tags` file for a project, skipping the usual junk directories.
 
+## Machine-specific bash settings
+
+Two optional files, both untracked:
+
+- `~/.bashrc.noninteractive.local` is sourced before the `case $- in *i*` guard, so it runs for
+  **every** shell — `ssh host cmd`, scripts, anything an editor or agent spawns. Put things there
+  that a non-interactive shell needs (`BASH_ENV`, a sandbox environment file, `PATH` entries a
+  build depends on). Keep it cheap; it runs on every shell startup.
+- `~/.bashrc.local` is sourced at the very end, and so only ever runs for interactive shells.
+  Prompts, aliases, slow toolchain init.
+
 ## First run on a machine
 
 `install.sh` moves any real file it would replace to `<name>.bak`, except `~/.bashrc`, which it
 moves to `~/.bashrc.local` so that whatever was in it keeps loading. Trim `~/.bashrc.local` down
-to what the repo `.bashrc` doesn't already cover (often: nothing).
+to what the repo `.bashrc` doesn't already cover (often: nothing), and move anything a
+non-interactive shell needs into `~/.bashrc.noninteractive.local`.
 
 ## Neovim
 
