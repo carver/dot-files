@@ -6,6 +6,7 @@ Re-run it after pulling; it is idempotent.
 | File | Linked to | Notes |
 | --- | --- | --- |
 | `.bashrc` | `~/.bashrc` | Portable: every toolchain block is guarded by an existence check. Sources two machine-specific files that are not in the repo: `~/.bashrc.noninteractive.local` before the interactive-only guard, `~/.bashrc.local` last. See below for which to use. |
+| `.profile` | `~/.profile` | Makes a **login** shell read `~/.bashrc` (bash only reads it for interactive non-login shells otherwise). Sources `~/.profile.local` last. |
 | `.bash_aliases` | `~/.bash_aliases` | Aliases and small functions (`..`, `mcd`, `n`, `serve`, `freq`, …). |
 | `.inputrc` | `~/.inputrc` | Case-insensitive tab completion. |
 | `nvim/` | `~/.config/nvim` | Neovim config (`init.vim`) and plugins via vim-plug. |
@@ -37,6 +38,12 @@ One ordering caveat when you leave things in `~/.bashrc.noninteractive.local`: i
 *before* the repo `.bashrc`'s own interactive settings, so if the file you migrated sets `PS1` or
 an alias that the repo also sets, the repo now wins. Move those lines to `~/.bashrc.local` to get
 the last word back.
+
+`~/.profile` gets the same treatment — an existing one moves to `~/.profile.local`, sourced at the
+end of the repo `.profile`. Put things there only if they are genuinely login-only; a login shell
+reads `~/.profile` *and* (through it) `~/.bashrc`, so `~/.bashrc.noninteractive.local` is the wider
+net. If `~/.bash_profile` or `~/.bash_login` exists, bash reads that **instead of** `~/.profile` and
+the repo file never runs; `install.sh` warns when it sees one.
 
 ## Neovim
 

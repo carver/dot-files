@@ -12,10 +12,22 @@ if command -v nvim >/dev/null 2>&1; then
 fi
 
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
-export PATH="$HOME/.local/bin:$PATH"
+
+# _path_add front|back DIR -- add DIR to PATH at most once. A login shell reaches
+# this file through ~/.profile while an interactive one reads it directly, so it
+# can end up sourced twice in one shell; without the check PATH would stack
+# duplicates every time.
+_path_add() {
+    case ":$PATH:" in *":$2:"*) return 0;; esac
+    if [ "$1" = front ]; then PATH="$2:$PATH"; else PATH="$PATH:$2"; fi
+}
+_path_add front "$HOME/.local/bin"
+[ -d "$HOME/bin" ] && _path_add front "$HOME/bin"
 # golang: the toolchain, then binaries from `go install` (GOPATH defaults to ~/go)
-[ -d /usr/local/go/bin ] && export PATH="$PATH:/usr/local/go/bin"
-export PATH="$PATH:${GOPATH:-$HOME/go}/bin"
+[ -d /usr/local/go/bin ] && _path_add back /usr/local/go/bin
+_path_add back "${GOPATH:-$HOME/go}/bin"
+unset -f _path_add
+export PATH
 
 # Don't let docker sbx cache the files locally, because I want to be able to edit them on the
 # host, and have the changes immediately visible. This has already bitten me once.

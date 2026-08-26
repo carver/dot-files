@@ -62,6 +62,31 @@ link "$DOTFILE_REPO/.bashrc" ~/.bashrc
 link "$DOTFILE_REPO/.bash_aliases" ~/.bash_aliases
 link "$DOTFILE_REPO/.inputrc" ~/.inputrc
 
+# ~/.profile is what makes a *login* shell read ~/.bashrc at all -- without it an
+# `ssh host`, a console login or a desktop session gets none of the above. Same
+# migration rule as .bashrc: whatever was there keeps loading, from a .local file.
+if [ -f ~/.profile ] && [ ! -L ~/.profile ]; then
+  if [ -f /etc/skel/.profile ] && cmp -s ~/.profile /etc/skel/.profile; then
+    rm ~/.profile
+  elif [ -e ~/.profile.local ]; then
+    echo "error: ~/.profile is not managed yet and ~/.profile.local already exists; merge them by hand" >&2
+    exit 1
+  else
+    mv ~/.profile ~/.profile.local
+    echo "moved existing ~/.profile to ~/.profile.local (sourced at the end of the repo .profile)"
+  fi
+fi
+link "$DOTFILE_REPO/.profile" ~/.profile
+
+# bash reads either of these *instead of* ~/.profile, so one lying around silently
+# shadows the link just made.
+for shadowing in ~/.bash_profile ~/.bash_login; do
+  if [ -e "$shadowing" ]; then
+    echo "warning: $shadowing exists; bash reads it instead of ~/.profile, so the repo" >&2
+    echo "  .profile will not run. Merge it into ~/.profile.local and delete it." >&2
+  fi
+done
+
 # ---- neovim ----------------------------------------------------------------
 mkdir -p ~/.config
 link "$DOTFILE_REPO/nvim" ~/.config/nvim
