@@ -112,7 +112,8 @@ done <"$DOTFILE_REPO/authorized_keys"
 # flake8: linter run by nvim-lint.  xclip + wl-clipboard: clipboard providers
 # for neovim's 'clipboard' option on X11 and Wayland respectively.
 sudo apt-get update
-sudo apt-get install -y python3-pip-whl neovim curl openssh-server flake8 xclip wl-clipboard
+sudo apt-get install -y python3-pip-whl curl openssh-server flake8 xclip wl-clipboard
+sudo snap install nvim --classic
 # Install/refresh vim-plug plugins non-interactively
 nvim --headless +'PlugInstall --sync' +qall
 # rust-analyzer for neovim's rust LSP. rustup is per-user, so there's no apt package;
