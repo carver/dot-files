@@ -142,9 +142,10 @@ if [ "${DOTFILES_SKIP_PACKAGES:-}" = 1 ]; then
   exit 0
 fi
 # flake8: linter run by nvim-lint.  xclip + wl-clipboard: clipboard providers
-# for neovim's 'clipboard' option on X11 and Wayland respectively.
+# for neovim's 'clipboard' option on X11 and Wayland respectively.  ripgrep: the
+# file lister and grepprg behind ctrlp in init.vim.
 sudo apt-get update
-sudo apt-get install -y python3-pip-whl curl openssh-server flake8 xclip wl-clipboard
+sudo apt-get install -y python3-pip-whl curl openssh-server flake8 xclip wl-clipboard ripgrep
 # neovim: the apt package is old enough to break render-markdown, so use upstream's
 # release build. The snap is that build plus auto-updates. Where there is no snapd, as
 # in docker sandboxes with no systemd or squashfs, unpack the same tarball instead.

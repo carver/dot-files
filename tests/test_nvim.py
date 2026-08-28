@@ -82,12 +82,18 @@ def test_flake8_lints_python_but_ignores_line_length(nvim, tmp_path):
     assert not any("E501" in m or "line too long" in m for m in messages), messages
 
 
-def test_ctrlp_uses_a_fast_file_lister_when_available(nvim):
-    if not (shutil.which("ag") or shutil.which("rg")):
-        pytest.skip("neither ag nor rg installed")
+def test_ctrlp_uses_rg_or_ag_for_file_listing(nvim):
+    require("rg")
     got = nvim.lua("{ cmd = vim.g.ctrlp_user_command, caching = vim.g.ctrlp_use_caching, grepprg = vim.o.grepprg }")
-    tool = "ag" if shutil.which("ag") else "rg"
+    tool = "ag" if shutil.which("ag") else "rg"  # ag wins when both are installed
     assert got["cmd"].startswith(tool) and got["caching"] == 0 and got["grepprg"].startswith(tool)
+
+
+def test_ctrlp_falls_back_to_its_own_lister_without_rg_or_ag(nvim):
+    n = nvim.with_env(PATH=path_without("rg", "ag"))
+    got = n.lua("{ own_lister = vim.g.ctrlp_user_command == nil, grepprg = vim.o.grepprg }")
+    assert got["own_lister"] is True
+    assert not got["grepprg"].startswith(("rg", "ag"))
 
 
 def test_rust_warns_once_when_rust_analyzer_is_missing(nvim, tmp_path):

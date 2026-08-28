@@ -56,7 +56,7 @@ does not know that setting. Plugins are
 installed by `install.sh` with `nvim --headless +PlugInstall +qall`; `init.vim` bootstraps
 vim-plug itself on first launch.
 
-- `ctrlp.vim`, fuzzy file finder, backed by `ag` or `rg` when available
+- `ctrlp.vim`, fuzzy file finder, backed by `rg`, which `install.sh` installs, or `ag` when present
 - `nvim-lint` runs `flake8 --ignore=E501` on python files on open and save. Results show as
   built-in diagnostics; `:Errors` lists them.
 - `render-markdown.nvim`, `<leader>m` toggles in-place rendering, `<leader>M` opens a side-by-side
