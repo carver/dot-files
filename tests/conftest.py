@@ -207,6 +207,12 @@ def nvim(tmp_path_factory):
         "XDG_DATA_HOME": str(cache_dir() / "nvim-data"),
         "XDG_STATE_HOME": str(root / "state"),
     })
+    # rustup's rust-analyzer is a proxy that looks under $HOME for the toolchain, and
+    # HOME is scratch here. Point it at the real install when there is one.
+    for var, default in (("RUSTUP_HOME", Path.home() / ".rustup"), ("CARGO_HOME", Path.home() / ".cargo")):
+        value = os.environ.get(var, str(default))
+        if Path(value).exists():
+            env[var] = value
     n = Nvim(env)
     n.run("+PlugInstall --sync", "+qa")
     return n
