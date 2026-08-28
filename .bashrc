@@ -7,10 +7,11 @@
 #                                   For anything slow enough that a script shouldn't pay for it.
 
 # --- Cheap, always-useful environment (also for non-interactive shells, e.g. `ssh host cmd`)
-if command -v nvim >/dev/null 2>&1; then
-  # TODO: use the result of command -v to set the full path to nvim below:
-    export SUDO_EDITOR=nvim EDITOR=nvim VISUAL=nvim
+# Full path, so it still resolves where PATH is trimmed, like under sudo -e or cron.
+if _nvim="$(command -v nvim)"; then
+    export SUDO_EDITOR="$_nvim" EDITOR="$_nvim" VISUAL="$_nvim"
 fi
+unset _nvim
 
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
