@@ -46,10 +46,12 @@ def test_alert_names_the_command_and_its_status(installed_home, tmp_path):
     sh = Shell(installed_home, path=f"{fake_bin}:{os.environ['PATH']}")
     out = sh.out(
         'history -s "sleep 10; alert"\ntrue\nalert\n'
-        'history -s "make; alert"\nfalse\nalert\n', mode="interactive")
+        'history -s "make || alert"\nfalse\nalert\n'
+        'history -s "make && alert"\ntrue\nalert\n', mode="interactive")
     assert out.split("\n") == [
         "--urgency=normal", "-i", "terminal", "sleep 10", "--",
         "--urgency=normal", "-i", "error", "make", "--",
+        "--urgency=normal", "-i", "terminal", "make", "--",
     ]
 
 
