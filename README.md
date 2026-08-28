@@ -45,6 +45,24 @@ reads `~/.profile` *and* (through it) `~/.bashrc`, so `~/.bashrc.noninteractive.
 net. If `~/.bash_profile` or `~/.bash_login` exists, bash reads that **instead of** `~/.profile` and
 the repo file never runs; `install.sh` warns when it sees one.
 
+## Testing
+
+```
+pytest            # every feature, against throwaway homes and an isolated nvim
+pytest --system   # also runs install.sh for real and checks what it left on the machine
+```
+
+The plain run never touches the machine's own config: `install.sh` runs with
+`DOTFILES_SKIP_PACKAGES=1` against temp homes, and neovim runs with its own XDG tree, plugins
+cached under `~/.cache/dotfiles-tests`. It needs `python3-pytest`, plus `nvim` and `flake8` for the
+neovim tests and `universal-ctags` for the `make-ctags.sh` test; tests skip when a tool is missing
+locally, and fail in CI where `install.sh` is supposed to have provided it.
+
+`--system` adds the tests that run `install.sh` unmodified: nvim from the snap or the tarball,
+`/etc/sudoers.d/10-editor` valid and pointing at it, apt neovim gone, and a second run that changes
+nothing. CI runs those on an ubuntu-24.04 runner, where snapd works, and inside ubuntu 24.04 and
+26.04 containers, where it doesn't, so both install paths get exercised on every push.
+
 ## Neovim
 
 `install.sh` installs neovim from upstream's release build, since the apt package is too old for

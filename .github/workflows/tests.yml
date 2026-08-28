@@ -1,0 +1,43 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  # Like the laptop: snapd works here, so install.sh takes the snap branch.
+  host:
+    name: ubuntu-24.04 runner (snap)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache the nvim plugins the tests install
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/dotfiles-tests
+          key: nvim-plugins-${{ hashFiles('nvim/init.vim') }}
+      - run: sudo apt-get update && sudo apt-get install -y python3-pytest universal-ctags
+      - run: ./install.sh
+      - run: python3 -m pytest --system
+
+  # Like a docker sandbox: no snapd, so install.sh unpacks the release tarball.
+  container:
+    name: ${{ matrix.image }} container (tarball)
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        image: ["ubuntu:24.04", "ubuntu:26.04"]
+    container: ${{ matrix.image }}
+    env:
+      DEBIAN_FRONTEND: noninteractive
+    steps:
+      - run: apt-get update && apt-get install -y sudo git curl ca-certificates python3-pytest universal-ctags
+      - uses: actions/checkout@v4
+      - name: Run as a regular user with passwordless sudo, the way install.sh expects
+        run: |
+          useradd -m tester
+          echo 'tester ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/tester
+          chown -R tester "$GITHUB_WORKSPACE"
+      - run: sudo -u tester -H env CI=true ./install.sh
+      - run: sudo -u tester -H env CI=true python3 -m pytest --system
