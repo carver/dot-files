@@ -134,6 +134,13 @@ while IFS= read -r key; do
 done <"$DOTFILE_REPO/authorized_keys"
 
 # ---- packages --------------------------------------------------------------
+# Everything above only touches $HOME. From here on it is apt, snap and sudoers.
+# The test suite sets DOTFILES_SKIP_PACKAGES=1 to run the link and migration
+# logic against throwaway homes without changing the machine.
+if [ "${DOTFILES_SKIP_PACKAGES:-}" = 1 ]; then
+  echo "skipping packages (DOTFILES_SKIP_PACKAGES=1)"
+  exit 0
+fi
 # flake8: linter run by nvim-lint.  xclip + wl-clipboard: clipboard providers
 # for neovim's 'clipboard' option on X11 and Wayland respectively.
 sudo apt-get update
