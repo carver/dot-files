@@ -47,8 +47,10 @@ the repo file never runs; `install.sh` warns when it sees one.
 
 ## Neovim
 
-Plugins are installed by `install.sh` (`nvim --headless +PlugInstall +qall`); vim-plug itself is
-bootstrapped by `init.vim` on first launch.
+`install.sh` installs neovim from upstream's release build, since the apt package is too old for
+render-markdown. With snapd that is the snap. Without it, the same tarball goes into `/opt/nvim`,
+linked from `/usr/local/bin/nvim`, which is how docker sandboxes get it. Plugins are installed by `install.sh`
+(`nvim --headless +PlugInstall +qall`); vim-plug itself is bootstrapped by `init.vim` on first launch.
 
 - `ctrlp.vim` – fuzzy file finder, backed by `ag` or `rg` when available
 - `nvim-lint` – runs `flake8 --ignore=E501` on python files on open and save, results shown as

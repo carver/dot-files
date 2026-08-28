@@ -36,6 +36,31 @@ unlink_stale() {
   fi
 }
 
+# install_nvim_release: upstream's release tarball into /opt/nvim, linked from
+# /usr/local/bin. Re-runs skip the download when that is already the latest release.
+install_nvim_release() {
+  local arch tag current tmp
+  case "$(uname -m)" in
+    x86_64) arch=x86_64;;
+    aarch64) arch=arm64;;
+    *) echo "error: neovim publishes no release build for $(uname -m)" >&2; return 1;;
+  esac
+  tag="$(curl -fsSIL -o /dev/null -w '%{url_effective}' https://github.com/neovim/neovim/releases/latest)"
+  tag="${tag##*/}"
+  if [ -x /opt/nvim/bin/nvim ]; then
+    current="$(/opt/nvim/bin/nvim --version | awk 'NR == 1 {print $2}')"
+    if [ "$current" = "$tag" ]; then return 0; fi
+  fi
+  tmp="$(mktemp -d)"
+  curl -fsSL "https://github.com/neovim/neovim/releases/download/$tag/nvim-linux-$arch.tar.gz" | tar -xz -C "$tmp"
+  sudo rm -rf /opt/nvim
+  sudo mv "$tmp/nvim-linux-$arch" /opt/nvim
+  sudo chown -R root:root /opt/nvim
+  rmdir "$tmp"
+  sudo ln -sfn /opt/nvim/bin/nvim /usr/local/bin/nvim
+  echo "installed neovim $tag to /opt/nvim"
+}
+
 # ---- bash ------------------------------------------------------------------
 # A machine's existing .bashrc is kept as ~/.bashrc.noninteractive.local rather
 # than backed up into oblivion. The repo .bashrc sources that before its
@@ -113,15 +138,24 @@ done <"$DOTFILE_REPO/authorized_keys"
 # for neovim's 'clipboard' option on X11 and Wayland respectively.
 sudo apt-get update
 sudo apt-get install -y python3-pip-whl curl openssh-server flake8 xclip wl-clipboard
-# The snap lives in /snap/bin, which comes after /usr/bin in PATH, so an apt
-# neovim left behind would shadow it (and become the EDITOR .bashrc picks up).
+# neovim: the apt package is old enough to break render-markdown, so use upstream's
+# release build. The snap is that build plus auto-updates. Where there is no snapd, as
+# in docker sandboxes with no systemd or squashfs, unpack the same tarball instead.
+# Either way the apt package goes first. /snap/bin comes after /usr/bin in PATH, so a
+# leftover would shadow the snap and become the EDITOR .bashrc picks up.
 sudo apt-get remove -y neovim
-sudo snap install nvim --classic
+if command -v snap >/dev/null 2>&1; then
+  sudo snap install nvim --classic
+  NVIM=/snap/bin/nvim
+else
+  install_nvim_release
+  NVIM=/usr/local/bin/nvim
+fi
 # sudo's env_reset hides EDITOR from visudo and `sudo crontab -e`, so tell sudo about
 # the editor directly. sudoedit_follow lets `sudo -e` edit through symlinks. The file is
 # checked with visudo before it lands: a sudoers.d file with a syntax error locks sudo out.
 sudoers_editor="$(mktemp)"
-printf 'Defaults sudoedit_follow\nDefaults editor=/snap/bin/nvim\n' >"$sudoers_editor"
+printf 'Defaults sudoedit_follow\nDefaults editor=%s\n' "$NVIM" >"$sudoers_editor"
 if ! sudo cmp -s "$sudoers_editor" /etc/sudoers.d/10-editor; then
   sudo visudo -cqf "$sudoers_editor"
   sudo install -m 0440 -o root -g root "$sudoers_editor" /etc/sudoers.d/10-editor
