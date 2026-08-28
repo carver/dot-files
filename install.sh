@@ -113,6 +113,9 @@ done <"$DOTFILE_REPO/authorized_keys"
 # for neovim's 'clipboard' option on X11 and Wayland respectively.
 sudo apt-get update
 sudo apt-get install -y python3-pip-whl curl openssh-server flake8 xclip wl-clipboard
+# The snap lives in /snap/bin, which comes after /usr/bin in PATH, so an apt
+# neovim left behind would shadow it (and become the EDITOR .bashrc picks up).
+sudo apt-get remove -y neovim
 sudo snap install nvim --classic
 # Install/refresh vim-plug plugins non-interactively
 nvim --headless +'PlugInstall --sync' +qall
