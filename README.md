@@ -50,7 +50,9 @@ the repo file never runs; `install.sh` warns when it sees one.
 for render-markdown. With snapd that means the snap. Without it, as in docker sandboxes, the same
 tarball goes into `/opt/nvim` with a link from `/usr/local/bin/nvim`. `install.sh` also writes
 `/etc/sudoers.d/10-editor`, so `visudo` and `sudo crontab -e` open nvim even though sudo drops
-`EDITOR`; `sudo -e` reads `SUDO_EDITOR` from your own environment and needs no help. Plugins are
+`EDITOR`; `sudo -e` reads `SUDO_EDITOR` from your own environment and needs no help. The file
+also sets `sudoedit_follow`, except under sudo-rs, the default sudo since Ubuntu 25.10, which
+does not know that setting. Plugins are
 installed by `install.sh` with `nvim --headless +PlugInstall +qall`; `init.vim` bootstraps
 vim-plug itself on first launch.
 

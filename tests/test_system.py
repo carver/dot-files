@@ -37,16 +37,25 @@ def test_install_provisions_the_machine():
         assert shutil.which(tool), tool
 
 
+def sudo_is_sudo_rs():
+    return "sudo-rs" in subprocess.run(["sudo", "--version"], capture_output=True, text=True).stdout
+
+
 def test_sudo_knows_the_editor():
     nvim = shutil.which("nvim")
     content = sudo("cat", "/etc/sudoers.d/10-editor")
     assert content.returncode == 0, content.stderr
-    assert content.stdout.splitlines() == ["Defaults sudoedit_follow", f"Defaults editor={nvim}"]
+    # sudo-rs has no sudoedit_follow, so only the editor line lands there
+    expected = [f"Defaults editor={nvim}"]
+    if not sudo_is_sudo_rs():
+        expected.insert(0, "Defaults sudoedit_follow")
+    assert content.stdout.splitlines() == expected
     assert sudo("visudo", "-cqf", "/etc/sudoers.d/10-editor").returncode == 0
     mode = oct(Path("/etc/sudoers.d/10-editor").stat().st_mode & 0o777) if os.access("/etc/sudoers.d/10-editor", os.R_OK) else None
     assert mode in (None, "0o440")
-    listing = sudo("-l").stdout
-    assert "sudoedit_follow" in listing and f"editor={nvim}" in listing
+    if not sudo_is_sudo_rs():  # sudo-rs lists commands only, no Defaults
+        listing = sudo("-l").stdout
+        assert "sudoedit_follow" in listing and f"editor={nvim}" in listing
 
 
 def test_root_completion_ignores_case():

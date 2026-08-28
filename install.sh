@@ -163,8 +163,12 @@ fi
 # checked with visudo before it lands: a sudoers.d file with a syntax error locks sudo out.
 sudoers_editor="$(mktemp)"
 printf 'Defaults sudoedit_follow\nDefaults editor=%s\n' "$NVIM" >"$sudoers_editor"
-if ! sudo cmp -s "$sudoers_editor" /etc/sudoers.d/10-editor; then
+# sudo-rs, the default sudo since Ubuntu 25.10, knows editor= but not sudoedit_follow.
+if ! sudo visudo -cqf "$sudoers_editor" 2>/dev/null; then
+  printf 'Defaults editor=%s\n' "$NVIM" >"$sudoers_editor"
   sudo visudo -cqf "$sudoers_editor"
+fi
+if ! sudo cmp -s "$sudoers_editor" /etc/sudoers.d/10-editor; then
   sudo install -m 0440 -o root -g root "$sudoers_editor" /etc/sudoers.d/10-editor
   echo "installed /etc/sudoers.d/10-editor"
 fi
