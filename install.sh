@@ -121,5 +121,3 @@ nvim --headless +'PlugInstall --sync' +qall
 if command -v rustup >/dev/null 2>&1; then
   rustup component add rust-analyzer rust-src || echo "warning: could not install rust-analyzer" >&2
 fi
-# nano outranks nvim in the alternatives priorities, so pick nvim explicitly
-sudo update-alternatives --set editor /usr/bin/nvim
