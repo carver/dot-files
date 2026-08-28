@@ -5,10 +5,12 @@ throwaway HOME or XDG tree, so the machine's own config is never read or written
 exceptions are marked `system` and only run with --system.
 """
 
+import atexit
 import json
 import os
 import shutil
 import subprocess
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -51,12 +53,24 @@ def require(tool):
 
 
 def path_without(*tools):
-    """PATH with every directory that contains one of the named tools taken out."""
-    keep = []
-    for d in os.environ["PATH"].split(":"):
-        if d and not any((Path(d) / t).exists() for t in tools):
-            keep.append(d)
-    return ":".join(keep)
+    """PATH with the named tools hidden. A directory that holds one is swapped for a shim
+    directory of symlinks to everything else in it, so its other tools stay available and
+    launchers that find helpers through PATH, like /snap/bin/nvim, keep working."""
+    shims = Path(tempfile.mkdtemp(prefix="path-without-"))
+    atexit.register(shutil.rmtree, shims, ignore_errors=True)
+    parts = []
+    for i, d in enumerate(os.environ["PATH"].split(":")):
+        directory = Path(d)
+        if not d or not any((directory / t).exists() for t in tools):
+            parts.append(d)
+            continue
+        shim = shims / str(i)
+        shim.mkdir()
+        for entry in directory.iterdir():
+            if entry.name not in tools:
+                (shim / entry.name).symlink_to(entry)
+        parts.append(str(shim))
+    return ":".join(parts)
 
 
 def clean_env(home, path=None):
