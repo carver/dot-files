@@ -49,6 +49,12 @@ def test_sudo_knows_the_editor():
     assert "sudoedit_follow" in listing and f"editor={nvim}" in listing
 
 
+def test_root_completion_ignores_case():
+    assert sudo("cat", "/root/.inputrc").stdout == (REPO / ".inputrc").read_text()
+    r = sudo("-H", "bash", "--norc", "-i", "-c", "bind -v")
+    assert "set completion-ignore-case on" in r.stdout.splitlines()
+
+
 def test_real_config_loads_with_plugins():
     r = subprocess.run(["nvim", "--headless", "+qa"], capture_output=True, text=True)
     assert r.returncode == 0 and r.stderr == "", r.stderr
@@ -66,7 +72,8 @@ def test_second_run_is_quiet_and_changes_nothing():
     opt_mtime = Path("/opt/nvim").stat().st_mtime if Path("/opt/nvim").exists() else None
     r = run_install()
     assert r.returncode == 0, r.stdout + r.stderr
-    own_lines = ("installed neovim", "installed /etc/sudoers.d", "moved existing", "removed stale link")
+    own_lines = ("installed neovim", "installed /etc/sudoers.d", "installed /root/.inputrc",
+                 "moved existing", "removed stale link")
     assert not any(w in r.stdout for w in own_lines), r.stdout
     after = {m: snapshot(HOME / m) if (HOME / m).is_dir() else os.readlink(HOME / m) if (HOME / m).is_symlink()
              else (HOME / m).read_bytes() for m in MANAGED}

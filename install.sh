@@ -169,6 +169,13 @@ if ! sudo cmp -s "$sudoers_editor" /etc/sudoers.d/10-editor; then
   echo "installed /etc/sudoers.d/10-editor"
 fi
 rm -f "$sudoers_editor"
+# Root's own shells (sudo -i, sudo -s) read /root/.inputrc, so give root the same
+# case-insensitive completion. A copy rather than a link: root should not depend
+# on a user's home directory staying where it is.
+if ! sudo cmp -s "$DOTFILE_REPO/.inputrc" /root/.inputrc; then
+  sudo install -m 0644 "$DOTFILE_REPO/.inputrc" /root/.inputrc
+  echo "installed /root/.inputrc"
+fi
 # Install/refresh vim-plug plugins non-interactively
 nvim --headless +'PlugInstall --sync' +qall
 # rust-analyzer for neovim's rust LSP. rustup is per-user, so there's no apt package;

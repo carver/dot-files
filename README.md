@@ -8,7 +8,7 @@ Re-run it after pulling; it is idempotent.
 | `.bashrc` | `~/.bashrc` | Portable: every toolchain block is guarded by an existence check. Sources two machine-specific files that are not in the repo: `~/.bashrc.noninteractive.local` before the interactive-only guard, `~/.bashrc.local` last. See below for which to use. |
 | `.profile` | `~/.profile` | Makes a **login** shell read `~/.bashrc` (bash only reads it for interactive non-login shells otherwise). Sources `~/.profile.local` last. |
 | `.bash_aliases` | `~/.bash_aliases` | Aliases and small functions (`..`, `mcd`, `n`, `serve`, `freq`, …). |
-| `.inputrc` | `~/.inputrc` | Case-insensitive tab completion. |
+| `.inputrc` | `~/.inputrc`, copied to `/root/.inputrc` | Case-insensitive tab completion, for root's shells too. |
 | `nvim/` | `~/.config/nvim` | Neovim config, `init.vim` plus one `lua/carver/` module per feature, and plugins via vim-plug. |
 | `authorized_keys` | appended to `~/.ssh/authorized_keys` | Only keys not already present. |
 
