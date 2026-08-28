@@ -117,6 +117,17 @@ sudo apt-get install -y python3-pip-whl curl openssh-server flake8 xclip wl-clip
 # neovim left behind would shadow it (and become the EDITOR .bashrc picks up).
 sudo apt-get remove -y neovim
 sudo snap install nvim --classic
+# sudo's env_reset hides EDITOR from visudo and `sudo crontab -e`, so tell sudo about
+# the editor directly. sudoedit_follow lets `sudo -e` edit through symlinks. The file is
+# checked with visudo before it lands: a sudoers.d file with a syntax error locks sudo out.
+sudoers_editor="$(mktemp)"
+printf 'Defaults sudoedit_follow\nDefaults editor=/snap/bin/nvim\n' >"$sudoers_editor"
+if ! sudo cmp -s "$sudoers_editor" /etc/sudoers.d/10-editor; then
+  sudo visudo -cqf "$sudoers_editor"
+  sudo install -m 0440 -o root -g root "$sudoers_editor" /etc/sudoers.d/10-editor
+  echo "installed /etc/sudoers.d/10-editor"
+fi
+rm -f "$sudoers_editor"
 # Install/refresh vim-plug plugins non-interactively
 nvim --headless +'PlugInstall --sync' +qall
 # rust-analyzer for neovim's rust LSP. rustup is per-user, so there's no apt package;
