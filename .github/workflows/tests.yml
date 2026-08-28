@@ -19,7 +19,9 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y python3-pytest universal-ctags
       - name: rustup, so install.sh adds rust-analyzer and the LSP attach test runs
         run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal
+          if ! command -v rustup >/dev/null; then
+            curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --no-modify-path --profile minimal
+          fi
           echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
       - run: ./install.sh
       - run: python3 -m pytest --system

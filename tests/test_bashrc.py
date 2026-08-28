@@ -30,8 +30,10 @@ def test_local_bin_leads_path(home):
 
 
 def test_path_has_no_duplicates_when_sourced_twice(home):
-    """A login shell reads .bashrc through .profile and again directly."""
-    parts = Shell(home).out(f'source {REPO}/.bashrc\necho "$PATH"').split(":")
+    """A login shell reads .bashrc through .profile and again directly. A fixed starting
+    PATH, since the inherited one may already repeat itself (GitHub's runners do)."""
+    sh = Shell(home, path="/usr/local/bin:/usr/bin:/bin")
+    parts = sh.out(f'source {REPO}/.bashrc\necho "$PATH"').split(":")
     assert len(parts) == len(set(parts)), parts
 
 

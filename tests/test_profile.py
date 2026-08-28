@@ -11,7 +11,8 @@ def test_login_shell_reaches_bashrc(installed_home):
 
 
 def test_login_shell_path_has_no_duplicates(installed_home):
-    parts = Shell(installed_home).out('echo "$PATH"', mode="login").split(":")
+    sh = Shell(installed_home, path="/usr/local/bin:/usr/bin:/bin")
+    parts = sh.out('echo "$PATH"', mode="login").split(":")
     assert len(parts) == len(set(parts)), parts
 
 
