@@ -13,9 +13,11 @@ function mcd() {
   mkdir -p "$1" && cd "$1";
 }
 
-alias n='nvim'
-alias vi='nvim'
-alias vim='nvim'
+if command -v nvim >/dev/null 2>&1; then
+  alias n='nvim'
+  alias vi='nvim'
+  alias vim='nvim'
+fi
 
 alias serve='ip addr | grep inet; python3 -m http.server'
 
