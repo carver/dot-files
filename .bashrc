@@ -8,7 +8,8 @@
 
 # --- Cheap, always-useful environment (also for non-interactive shells, e.g. `ssh host cmd`)
 if command -v nvim >/dev/null 2>&1; then
-    export EDITOR=nvim VISUAL=nvim
+  # TODO: use the result of command -v to set the full path to nvim below:
+    export SUDO_EDITOR=nvim EDITOR=nvim VISUAL=nvim
 fi
 
 [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"

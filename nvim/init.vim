@@ -78,6 +78,8 @@ elseif executable('rg')
   let g:ctrlp_use_caching = 0
 endif
 
+" TODO extract lua scripts into nvim/lua/carver/<good module name here>.lua
+
 " ---- nvim-lint: flake8 on open and on save ----------------------------------
 "   :Errors   - list the current buffer's diagnostics (like syntastic's :Errors)
 lua << LUA
@@ -164,3 +166,6 @@ lua << LUA
 LUA
 nnoremap <leader>m :RenderMarkdown toggle<CR>
 nnoremap <leader>M :RenderMarkdown preview<CR>
+
+" ---- Detect file types in /tmp, like when running `sudo -e`
+lua require('carver.detect-tmp-filetype')

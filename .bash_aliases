@@ -14,6 +14,8 @@ function mcd() {
 }
 
 alias n='nvim'
+alias vi='nvim'
+alias vim='nvim'
 
 alias serve='ip addr | grep inet; python3 -m http.server'
 
