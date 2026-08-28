@@ -9,7 +9,7 @@ Re-run it after pulling; it is idempotent.
 | `.profile` | `~/.profile` | Makes a **login** shell read `~/.bashrc` (bash only reads it for interactive non-login shells otherwise). Sources `~/.profile.local` last. |
 | `.bash_aliases` | `~/.bash_aliases` | Aliases and small functions (`..`, `mcd`, `n`, `serve`, `freq`, …). |
 | `.inputrc` | `~/.inputrc` | Case-insensitive tab completion. |
-| `nvim/` | `~/.config/nvim` | Neovim config (`init.vim`) and plugins via vim-plug. |
+| `nvim/` | `~/.config/nvim` | Neovim config, `init.vim` plus one `lua/carver/` module per feature, and plugins via vim-plug. |
 | `authorized_keys` | appended to `~/.ssh/authorized_keys` | Only keys not already present. |
 
 `make-ctags.sh` builds a `tags` file for a project, skipping the usual junk directories.
