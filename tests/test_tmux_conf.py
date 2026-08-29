@@ -39,3 +39,7 @@ def test_ctrl_pageup_and_pagedown_switch_tabs_without_the_prefix(tmux):
 def test_a_new_tab_opens_in_the_current_directory(tmux):
     assert tmux.out("list-keys", "-T", "prefix", "c").split() == \
         ["bind-key", "-T", "prefix", "c", "new-window", "-c", '"#{pane_current_path}"']
+
+
+def test_escape_waits_ten_milliseconds(tmux):
+    assert tmux.out("show-options", "-sv", "escape-time") == "10"
