@@ -76,6 +76,16 @@ def test_ctrl_c_saves_from_normal_mode(nvim, tmp_path):
     assert f.read_text() == "onetwo\n"
 
 
+def test_ctrl_c_in_insert_mode_only_leaves_insert_mode(nvim, tmp_path):
+    """Typed inside insert mode it is the plain Esc it always was. The save is a second press."""
+    f = tmp_path / "a.txt"
+    f.write_text("one\n")
+    got = nvim.lua("(function() " + FEED % "Atwo<C-c>" + " return { mode = vim.fn.mode(), modified = vim.bo.modified } end)()",
+                   file=f)
+    assert got == {"mode": "n", "modified": True}
+    assert f.read_text() == "one\n"
+
+
 def test_ctrl_c_in_visual_mode_saves_the_whole_file(nvim, tmp_path):
     f = tmp_path / "a.txt"
     f.write_text("one\ntwo\nthree\n")
