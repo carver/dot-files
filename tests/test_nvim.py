@@ -85,6 +85,16 @@ def test_ctrl_c_in_visual_mode_saves_the_whole_file(nvim, tmp_path):
     assert f.read_text() == "onefour\ntwo\nthree\n"
 
 
+def test_pasting_over_a_selection_keeps_the_register(nvim, tmp_path):
+    f = tmp_path / "a.txt"
+    f.write_text("one two\n")
+    got = nvim.lua("""(function()
+        vim.cmd('normal yiwwviwp')
+        return { line = vim.fn.getline(1), reg = vim.fn.getreg('"') }
+    end)()""", file=f)
+    assert got == {"line": "one one", "reg": "one"}
+
+
 def test_overlength_highlight_applies_per_window(nvim, tmp_path):
     f = tmp_path / "a.txt"
     f.write_text("x\n")

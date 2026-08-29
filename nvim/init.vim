@@ -31,6 +31,10 @@ nnoremap <C-a> ggVG
 nnoremap <C-c> :w<CR>
 xnoremap <C-c> <Esc>:w<CR>
 
+" Paste over a selection without the replaced text taking over the register (and, through
+" clipboard=unnamed, the system clipboard). Visual P is p that leaves the register alone.
+xnoremap p P
+
 " Show the file path in the terminal title
 set title
 
