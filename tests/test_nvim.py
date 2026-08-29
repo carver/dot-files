@@ -28,6 +28,11 @@ def test_editing_options(nvim):
     }
 
 
+def test_line_numbers_are_relative_except_the_current_line(nvim):
+    got = nvim.lua("{ number = vim.wo.number, relativenumber = vim.wo.relativenumber }")
+    assert got == {"number": True, "relativenumber": True}
+
+
 def test_key_maps(nvim):
     got = nvim.lua("""{
         jk = vim.fn.maparg('jk', 'i'), dot = vim.fn.maparg('.', 'v'),

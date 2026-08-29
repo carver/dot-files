@@ -56,6 +56,8 @@ does not know that setting. Plugins are
 installed by `install.sh` with `nvim --headless +PlugInstall +qall`; `init.vim` bootstraps
 vim-plug itself on first launch.
 
+- Line numbers show the absolute number on the current line and the distance on every other
+  line, so the count for a `j`, `k`, `d` or `y` reads straight off the gutter.
 - `ctrlp.vim`, fuzzy file finder, backed by `rg`, which `install.sh` installs, or `ag` when present
 - `nvim-lint` runs `flake8 --ignore=E501` on python files on open and save. Results show as
   built-in diagnostics; `:Errors` lists them.

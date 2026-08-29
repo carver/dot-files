@@ -9,6 +9,10 @@ set background=dark
 " Case-insensitive search, unless the pattern contains a capital letter
 set ignorecase smartcase
 
+" Line numbers: the absolute number on the current line, distances on the rest, so a
+" count for j, k, d or y can be read straight off the gutter
+set number relativenumber
+
 inoremap jk <ESC>
 vnoremap . :norm.<CR>
 
