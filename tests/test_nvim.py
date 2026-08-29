@@ -67,6 +67,24 @@ def test_ctrl_a_selects_the_whole_file(nvim, tmp_path):
     assert got == {"mode": "V", "first": 1, "last": 3}
 
 
+def test_ctrl_c_saves_from_normal_mode(nvim, tmp_path):
+    f = tmp_path / "a.txt"
+    f.write_text("one\n")
+    modified = nvim.lua("(function() " + FEED % "<C-c>" + " return vim.bo.modified end)()",
+                        file=f, after=["normal! Atwo"])
+    assert modified is False
+    assert f.read_text() == "onetwo\n"
+
+
+def test_ctrl_c_in_visual_mode_saves_the_whole_file(nvim, tmp_path):
+    f = tmp_path / "a.txt"
+    f.write_text("one\ntwo\nthree\n")
+    got = nvim.lua("(function() " + FEED % "V<C-c>" + " return { mode = vim.fn.mode(), modified = vim.bo.modified } end)()",
+                   file=f, after=["normal! Afour"])
+    assert got == {"mode": "n", "modified": False}
+    assert f.read_text() == "onefour\ntwo\nthree\n"
+
+
 def test_overlength_highlight_applies_per_window(nvim, tmp_path):
     f = tmp_path / "a.txt"
     f.write_text("x\n")

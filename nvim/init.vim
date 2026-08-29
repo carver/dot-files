@@ -26,6 +26,11 @@ vnoremap . :norm.<CR>
 " is still there as Ctrl-X's opposite in visual mode.
 nnoremap <C-a> ggVG
 
+" Ctrl-C saves, outside insert mode. From visual mode leave the selection first: a plain :w
+" there is :'<,'>w, which writes the selected lines alone.
+nnoremap <C-c> :w<CR>
+xnoremap <C-c> <Esc>:w<CR>
+
 " Show the file path in the terminal title
 set title
 
