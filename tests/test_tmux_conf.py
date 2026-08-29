@@ -91,3 +91,9 @@ def test_ctrl_t_is_the_prefix_and_ctrl_b_is_not(tmux):
     assert tmux.out("list-keys", "-T", "prefix", "C-t").split() == \
         ["bind-key", "-T", "prefix", "C-t", "send-prefix"]
     assert tmux.run("list-keys", "-T", "prefix", "C-b", check=False).returncode == 1
+
+
+def test_prefix_ctrl_hjkl_moves_between_panes_like_vim(tmux):
+    for key, direction in (("C-h", "-L"), ("C-j", "-D"), ("C-k", "-U"), ("C-l", "-R")):
+        assert tmux.out("list-keys", "-T", "prefix", key).split() == \
+            ["bind-key", "-T", "prefix", key, "select-pane", direction]

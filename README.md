@@ -19,6 +19,7 @@ The prefix is `Ctrl-t`, as it was in the `.screenrc` this replaced; `Ctrl-b` is 
 one closes so there is never a gap. Panes count from 1 too.
 A new tab (`prefix c`) starts in the current tab's directory. So does a split: `prefix v` puts
 the new pane beside this one, `prefix h` below it, as vim's `:vsplit` and `:split` do. `prefix %` and `prefix "` still work.
+`prefix Ctrl-h`, `Ctrl-j`, `Ctrl-k`, `Ctrl-l` move to the pane on the left, below, above, right, vim's letters.
 `Ctrl-PageUp` and `Ctrl-PageDown` move between tabs with no prefix, the same keys GNOME
 Terminal uses for its own tabs, and `Alt-1` to `Alt-9` jump to that tab. GNOME Terminal grabs
 `Alt-N` for its own tabs first, so where it is installed `install.sh` turns those shortcuts off
