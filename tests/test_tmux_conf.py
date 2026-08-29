@@ -67,3 +67,9 @@ def test_minus_and_underscore_split_the_pane_in_the_current_directory(tmux):
         ["bind-key", "-T", "prefix", "-", "split-window", "-h", "-c", "\"#{pane_current_path}\""]
     assert tmux.out("list-keys", "-T", "prefix", "_").split() == \
         ["bind-key", "-T", "prefix", "_", "split-window", "-v", "-c", "\"#{pane_current_path}\""]
+
+
+def test_alt_n_jumps_to_tab_n(tmux):
+    for n in range(1, 10):
+        assert tmux.out("list-keys", "-T", "root", f"M-{n}").split() == \
+            ["bind-key", "-T", "root", f"M-{n}", "select-window", "-t", str(n)]

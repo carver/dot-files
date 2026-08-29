@@ -20,7 +20,7 @@ one closes so there is never a gap. Panes count from 1 too.
 A new tab (`prefix c`) starts in the current tab's directory. So does a split: `prefix -` puts
 the new pane beside this one, `prefix _` below it. `prefix %` and `prefix "` still work.
 `Ctrl-PageUp` and `Ctrl-PageDown` move between tabs with no prefix, the same keys GNOME
-Terminal uses for its own tabs.
+Terminal uses for its own tabs, and `Alt-1` to `Alt-9` jump to that tab.
 Copy mode (`prefix [`) and the command prompt (`prefix :`) use vi keys.
 Scrollback keeps 50000 lines per pane.
 The mouse works: click a tab, wheel to scroll back, drag a pane border.
