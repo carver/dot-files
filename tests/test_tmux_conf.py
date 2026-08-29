@@ -1,5 +1,14 @@
 """The tmux config, read by a server on its own socket."""
 
+from conftest import REPO
+
+
+def test_config_loads_without_errors(tmux):
+    """A server started with -f keeps config errors for the first client to attach. Sourcing
+    the file again from a client reports them, and exits 1, right there."""
+    r = tmux.run("source-file", str(REPO / ".tmux.conf"), check=False)
+    assert (r.returncode, r.stdout, r.stderr) == (0, "", "")
+
 
 def test_windows_and_panes_count_from_one(tmux):
     tmux.run("new-window")
