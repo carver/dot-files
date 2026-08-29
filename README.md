@@ -52,7 +52,11 @@ tarball goes into `/opt/nvim` with a link from `/usr/local/bin/nvim`. `install.s
 `/etc/sudoers.d/10-editor`, so `visudo` and `sudo crontab -e` open nvim even though sudo drops
 `EDITOR`; `sudo -e` reads `SUDO_EDITOR` from your own environment and needs no help. The file
 also sets `sudoedit_follow`, except under sudo-rs, the default sudo since Ubuntu 25.10, which
-does not know that setting. Plugins are
+does not know that setting. The clipboard providers are `xclip`, always, and `wl-clipboard`
+only where a Wayland socket exists under `XDG_RUNTIME_DIR`. nvim reaches for `wl-copy` whenever
+`WAYLAND_DISPLAY` is set, and a docker sandbox inherits that variable from the host with nothing
+behind it, so on such a machine `install.sh` removes `wl-clipboard` again and every yank stops
+failing with a clipboard error. Plugins are
 installed by `install.sh` with `nvim --headless +PlugInstall +qall`; `init.vim` bootstraps
 vim-plug itself on first launch.
 

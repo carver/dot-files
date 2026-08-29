@@ -3,6 +3,7 @@ CI or a machine you are happy to have provisioned. Everything here is idempotent
 
 import os
 import shutil
+import socket
 import subprocess
 from pathlib import Path
 
@@ -33,8 +34,34 @@ def test_install_provisions_the_machine():
         assert Path(nvim).resolve() == Path("/opt/nvim/bin/nvim")
     assert subprocess.run(["dpkg", "-s", "neovim"], capture_output=True).returncode != 0, "apt neovim still installed"
     assert subprocess.run(["nvim", "--version"], capture_output=True).returncode == 0
-    for tool in ("flake8", "curl", "xclip", "wl-copy", "rg"):
+    for tool in ("flake8", "curl", "xclip", "rg"):
         assert shutil.which(tool), tool
+
+
+def install_with_wayland(runtime_dir, display, listening):
+    """install.sh with XDG_RUNTIME_DIR pointed at a scratch dir, holding a wayland-0 socket
+    or not, and WAYLAND_DISPLAY set or unset. The machine's own desktop state stays out of it."""
+    runtime_dir.mkdir(mode=0o700)
+    if listening:
+        sock = socket.socket(socket.AF_UNIX)
+        sock.bind(str(runtime_dir / "wayland-0"))
+    env = {k: v for k, v in os.environ.items() if k != "WAYLAND_DISPLAY"}
+    env["XDG_RUNTIME_DIR"] = str(runtime_dir)
+    if display:
+        env["WAYLAND_DISPLAY"] = display
+    r = subprocess.run([str(REPO / "install.sh")], cwd=REPO, env=env, capture_output=True, text=True)
+    assert r.returncode == 0, r.stdout + r.stderr
+    return r
+
+
+@pytest.mark.parametrize("display,listening,present", [
+    ("wayland-0", True, True),   # a desktop session
+    (None, True, True),          # ssh into a machine with a desktop session running
+    ("wayland-0", False, False), # a docker sandbox: the variable leaks in from the host, the socket does not
+], ids=["desktop", "ssh-into-desktop", "sandbox"])
+def test_wl_clipboard_only_where_a_wayland_socket_answers(tmp_path, display, listening, present):
+    install_with_wayland(tmp_path / "run", display, listening)
+    assert bool(shutil.which("wl-copy")) is present
 
 
 def sudo_is_sudo_rs():
@@ -82,7 +109,7 @@ def test_second_run_is_quiet_and_changes_nothing():
     r = run_install()
     assert r.returncode == 0, r.stdout + r.stderr
     own_lines = ("installed neovim", "installed /etc/sudoers.d", "installed /root/.inputrc",
-                 "moved existing", "removed stale link")
+                 "moved existing", "removed stale link", "removed wl-clipboard")
     assert not any(w in r.stdout for w in own_lines), r.stdout
     after = {m: snapshot(HOME / m) if (HOME / m).is_dir() else os.readlink(HOME / m) if (HOME / m).is_symlink()
              else (HOME / m).read_bytes() for m in MANAGED}

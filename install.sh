@@ -61,6 +61,22 @@ install_nvim_release() {
   echo "installed neovim $tag to /opt/nvim"
 }
 
+# uses_wayland: a compositor is reachable, judged the way a Wayland client finds one: a
+# socket under XDG_RUNTIME_DIR. WAYLAND_DISPLAY alone is wrong both ways. A docker sandbox
+# inherits it from the host with nothing behind it, and an ssh session into a desktop has
+# no WAYLAND_DISPLAY at all but does have the socket.
+uses_wayland() {
+  local dir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}" name="${WAYLAND_DISPLAY:-}" sock
+  case "$name" in
+    /*) [ -S "$name" ]; return;;
+    ?*) [ -S "$dir/$name" ]; return;;
+  esac
+  for sock in "$dir"/wayland-[0-9]*; do
+    [ -S "$sock" ] && return 0
+  done
+  return 1
+}
+
 # ---- bash ------------------------------------------------------------------
 # A machine's existing .bashrc is kept as ~/.bashrc.noninteractive.local rather
 # than backed up into oblivion. The repo .bashrc sources that before its
@@ -141,11 +157,22 @@ if [ "${DOTFILES_SKIP_PACKAGES:-}" = 1 ]; then
   echo "skipping packages (DOTFILES_SKIP_PACKAGES=1)"
   exit 0
 fi
-# flake8: linter run by nvim-lint.  xclip + wl-clipboard: clipboard providers
-# for neovim's 'clipboard' option on X11 and Wayland respectively.  ripgrep: the
-# file lister and grepprg behind ctrlp in init.vim.
+# flake8: linter run by nvim-lint.  xclip: clipboard provider for neovim's 'clipboard'
+# option on X11.  ripgrep: the file lister and grepprg behind ctrlp in init.vim.
+packages=(python3-pip-whl curl openssh-server flake8 xclip ripgrep)
+# wl-clipboard, the Wayland clipboard provider, only where a compositor answers. neovim
+# picks wl-copy whenever WAYLAND_DISPLAY is set, and in a docker sandbox that variable
+# leaks in from the host with no socket behind it, so every yank ended in a clipboard
+# error. Without wl-copy neovim moves on to xclip, or to no provider at all.
+if uses_wayland; then
+  packages+=(wl-clipboard)
+fi
 sudo apt-get update
-sudo apt-get install -y python3-pip-whl curl openssh-server flake8 xclip wl-clipboard ripgrep
+sudo apt-get install -y "${packages[@]}"
+if ! uses_wayland && dpkg -s wl-clipboard >/dev/null 2>&1; then
+  sudo apt-get remove -y wl-clipboard
+  echo "removed wl-clipboard: no Wayland socket on this machine"
+fi
 # neovim: the apt package is old enough to break render-markdown, so use upstream's
 # release build. The snap is that build plus auto-updates. Where there is no snapd, as
 # in docker sandboxes with no systemd or squashfs, unpack the same tarball instead.
