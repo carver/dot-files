@@ -60,6 +60,8 @@ vim-plug itself on first launch.
   line, so the count for a `j`, `k`, `d` or `y` reads straight off the gutter.
 - Undo history persists on disk, so `u` still works after closing and reopening a file.
 - Space is the leader key, so `<leader>m` below means Space then `m`.
+- `Ctrl-A` in normal mode selects the whole file. Increment a number with `Ctrl-A` in visual
+  mode instead.
 - `ctrlp.vim`, fuzzy file finder, backed by `rg`, which `install.sh` installs, or `ag` when present
 - `nvim-lint` runs `flake8 --ignore=E501` on python files on open and save. Results show as
   built-in diagnostics; `:Errors` lists them.

@@ -22,6 +22,10 @@ let mapleader = " "
 inoremap jk <ESC>
 vnoremap . :norm.<CR>
 
+" Ctrl-A selects the whole file, as everywhere outside vim. The number increment it replaces
+" is still there as Ctrl-X's opposite in visual mode.
+nnoremap <C-a> ggVG
+
 " Show the file path in the terminal title
 set title
 

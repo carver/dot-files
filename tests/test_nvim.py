@@ -55,6 +55,18 @@ def test_space_is_the_leader_key(nvim):
     assert nvim.lua("vim.fn.maparg('<Space>m', 'n')") == ":RenderMarkdown toggle<CR>"
 
 
+FEED = "vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes('%s', true, false, true), 'x', false)"
+
+
+def test_ctrl_a_selects_the_whole_file(nvim, tmp_path):
+    f = tmp_path / "a.txt"
+    f.write_text("one\ntwo\nthree\n")
+    got = nvim.lua("(function() " + FEED % "<C-a>" + """
+        return { mode = vim.fn.mode(), first = vim.fn.line('v'), last = vim.fn.line('.') }
+    end)()""", file=f, after=["2"])
+    assert got == {"mode": "V", "first": 1, "last": 3}
+
+
 def test_overlength_highlight_applies_per_window(nvim, tmp_path):
     f = tmp_path / "a.txt"
     f.write_text("x\n")
