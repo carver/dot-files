@@ -73,3 +73,12 @@ def test_alt_n_jumps_to_tab_n(tmux):
     for n in range(1, 10):
         assert tmux.out("list-keys", "-T", "root", f"M-{n}").split() == \
             ["bind-key", "-T", "root", f"M-{n}", "select-window", "-t", str(n)]
+
+
+def test_ctrl_t_is_the_prefix_and_ctrl_b_is_not(tmux):
+    """The .screenrc that came before used Ctrl-t. Ctrl-t twice sends a Ctrl-t through, as
+    tmux does for its default Ctrl-b."""
+    assert tmux.out("show-options", "-gv", "prefix") == "C-t"
+    assert tmux.out("list-keys", "-T", "prefix", "C-t").split() == \
+        ["bind-key", "-T", "prefix", "C-t", "send-prefix"]
+    assert tmux.run("list-keys", "-T", "prefix", "C-b", check=False).returncode == 1
