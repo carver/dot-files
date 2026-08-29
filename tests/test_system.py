@@ -64,6 +64,24 @@ def test_wl_clipboard_only_where_a_wayland_socket_answers(tmp_path, display, lis
     assert bool(shutil.which("wl-copy")) is present
 
 
+GNOME_TERMINAL_KEYS = "org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/"
+
+
+def gsettings(*args):
+    """gsettings on a session bus of its own, so it works outside a desktop session too."""
+    return subprocess.run(["dbus-run-session", "--", "gsettings", *args],
+                          capture_output=True, text=True).stdout.strip()
+
+
+def test_gnome_terminal_hands_alt_n_to_tmux():
+    """After install.sh has run (the first test). Only where GNOME Terminal is installed, as
+    its schema shows; CI runners and sandboxes have no terminal emulator."""
+    if not shutil.which("gsettings") or \
+            "org.gnome.Terminal.Legacy.Keybindings" not in gsettings("list-relocatable-schemas").split():
+        pytest.skip("no GNOME Terminal here")
+    assert [gsettings("get", GNOME_TERMINAL_KEYS, f"switch-to-tab-{n}") for n in range(1, 10)] == ["'disabled'"] * 9
+
+
 def sudo_is_sudo_rs():
     return "sudo-rs" in subprocess.run(["sudo", "--version"], capture_output=True, text=True).stdout
 
@@ -109,7 +127,7 @@ def test_second_run_is_quiet_and_changes_nothing():
     r = run_install()
     assert r.returncode == 0, r.stdout + r.stderr
     own_lines = ("installed neovim", "installed /etc/sudoers.d", "installed /root/.inputrc",
-                 "moved existing", "removed stale link", "removed wl-clipboard")
+                 "moved existing", "removed stale link", "removed wl-clipboard", "handed to tmux")
     assert not any(w in r.stdout for w in own_lines), r.stdout
     after = {m: snapshot(HOME / m) if (HOME / m).is_dir() else os.readlink(HOME / m) if (HOME / m).is_symlink()
              else (HOME / m).read_bytes() for m in MANAGED}

@@ -153,7 +153,8 @@ while IFS= read -r key; do
 done <"$DOTFILE_REPO/authorized_keys"
 
 # ---- packages --------------------------------------------------------------
-# Everything above only touches $HOME. From here on it is apt, snap and sudoers.
+# Everything above only touches $HOME. From here on it is apt, snap, sudoers and desktop
+# settings.
 # The test suite sets DOTFILES_SKIP_PACKAGES=1 to run the link and migration
 # logic against throwaway homes without changing the machine.
 if [ "${DOTFILES_SKIP_PACKAGES:-}" = 1 ]; then
@@ -214,6 +215,24 @@ if ! sudo cmp -s "$DOTFILE_REPO/.inputrc" /root/.inputrc; then
 fi
 # Install/refresh vim-plug plugins non-interactively
 nvim --headless +'PlugInstall --sync' +qall
+# GNOME Terminal takes Alt-1..9 for its own tabs before tmux can see them, and .tmux.conf
+# wants them for its tabs. Only where GNOME Terminal is installed, as its schema shows.
+# gsettings writes through the session bus; outside a desktop session (ssh, a test run)
+# there is none, so start one for each call. dbus prints its activation log to stderr.
+gsettings_cmd=(gsettings)
+if [ -z "${DBUS_SESSION_BUS_ADDRESS:-}" ] && command -v dbus-run-session >/dev/null 2>&1; then
+  gsettings_cmd=(dbus-run-session -- gsettings)
+fi
+terminal_keys="org.gnome.Terminal.Legacy.Keybindings:/org/gnome/terminal/legacy/keybindings/"
+if command -v gsettings >/dev/null 2>&1 \
+   && "${gsettings_cmd[@]}" list-relocatable-schemas 2>/dev/null | grep -qx org.gnome.Terminal.Legacy.Keybindings; then
+  for n in 1 2 3 4 5 6 7 8 9; do
+    if [ "$("${gsettings_cmd[@]}" get "$terminal_keys" "switch-to-tab-$n" 2>/dev/null)" != "'disabled'" ]; then
+      "${gsettings_cmd[@]}" set "$terminal_keys" "switch-to-tab-$n" disabled 2>/dev/null
+      echo "gnome-terminal: Alt-$n handed to tmux"
+    fi
+  done
+fi
 # rust-analyzer for neovim's rust LSP. rustup is per-user, so there's no apt package;
 # skip quietly on machines without rust.
 if command -v rustup >/dev/null 2>&1; then

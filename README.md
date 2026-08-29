@@ -20,7 +20,9 @@ one closes so there is never a gap. Panes count from 1 too.
 A new tab (`prefix c`) starts in the current tab's directory. So does a split: `prefix -` puts
 the new pane beside this one, `prefix _` below it. `prefix %` and `prefix "` still work.
 `Ctrl-PageUp` and `Ctrl-PageDown` move between tabs with no prefix, the same keys GNOME
-Terminal uses for its own tabs, and `Alt-1` to `Alt-9` jump to that tab.
+Terminal uses for its own tabs, and `Alt-1` to `Alt-9` jump to that tab. GNOME Terminal grabs
+`Alt-N` for its own tabs first, so where it is installed `install.sh` turns those shortcuts off
+(`switch-to-tab-N` in its gsettings). Use `Ctrl-PageUp`/`Ctrl-PageDown` for terminal tabs.
 Copy mode (`prefix [`) and the command prompt (`prefix :`) use vi keys.
 Scrollback keeps 50000 lines per pane.
 The mouse works: click a tab, wheel to scroll back, drag a pane border.
