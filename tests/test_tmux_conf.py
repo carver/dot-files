@@ -17,3 +17,11 @@ def test_closing_a_window_closes_the_gap_in_the_numbering(tmux):
     tmux.run("new-window")
     tmux.run("kill-window", "-t", "2")
     assert tmux.lines("list-windows", "-F", "#I") == ["1", "2"]
+
+
+def test_ctrl_pageup_and_pagedown_switch_tabs_without_the_prefix(tmux):
+    # PPage and NPage are tmux's own names for PageUp and PageDown
+    assert tmux.out("list-keys", "-T", "root", "C-PageUp").split() == \
+        ["bind-key", "-T", "root", "C-PPage", "previous-window"]
+    assert tmux.out("list-keys", "-T", "root", "C-PageDown").split() == \
+        ["bind-key", "-T", "root", "C-NPage", "next-window"]
