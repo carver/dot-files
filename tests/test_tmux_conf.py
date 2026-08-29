@@ -52,3 +52,7 @@ def test_true_color_and_the_tmux_terminfo(tmux):
 
 def test_the_mouse_works(tmux):
     assert tmux.out("show-options", "-gv", "mouse") == "on"
+
+
+def test_scrollback_keeps_fifty_thousand_lines(tmux):
+    assert tmux.out("show-options", "-gv", "history-limit") == "50000"
