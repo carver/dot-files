@@ -33,6 +33,15 @@ def test_line_numbers_are_relative_except_the_current_line(nvim):
     assert got == {"number": True, "relativenumber": True}
 
 
+def test_undo_survives_restarting_nvim(nvim, tmp_path):
+    f = tmp_path / "a.txt"
+    f.write_text("one\n")
+    nvim.run("+normal! Atwo", "+wq", str(f))
+    assert f.read_text() == "onetwo\n"
+    nvim.run("+normal! u", "+wq", str(f))
+    assert f.read_text() == "one\n"
+
+
 def test_key_maps(nvim):
     got = nvim.lua("""{
         jk = vim.fn.maparg('jk', 'i'), dot = vim.fn.maparg('.', 'v'),

@@ -13,6 +13,9 @@ set ignorecase smartcase
 " count for j, k, d or y can be read straight off the gutter
 set number relativenumber
 
+" Keep undo history on disk (under stdpath('state')), so u still works after reopening a file
+set undofile
+
 inoremap jk <ESC>
 vnoremap . :norm.<CR>
 
