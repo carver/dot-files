@@ -15,7 +15,8 @@ idempotent.
 
 ## tmux
 
-Windows are the tabs, numbered from 1 so that window N sits under key N. Panes count from 1 too.
+Windows are the tabs, numbered from 1 so that window N sits under key N, and renumbered when
+one closes so there is never a gap. Panes count from 1 too.
 Copy mode (`prefix [`) and the command prompt (`prefix :`) use vi keys.
 
 `make-ctags.sh` builds a `tags` file for a project and skips the usual junk directories.
