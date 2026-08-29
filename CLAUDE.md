@@ -17,6 +17,8 @@ The seams are agreed. Test at these and nowhere deeper:
   under `--system` what it leaves on the machine: nvim, sudoers, `/root`.
 - **neovim**: options, maps, autocmd groups, filetypes, diagnostics, as `Nvim.lua()` reports them
   from an isolated XDG tree. The lua modules are tested through nvim, never imported directly.
+- **tmux**: options, key bindings, window and pane layout, as a server on its own socket reports
+  them after reading only the repo `.tmux.conf` (`tmux` fixture in `tests/conftest.py`).
 
 A change that needs a new seam is a conversation first, not a test.
 

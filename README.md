@@ -13,6 +13,10 @@ idempotent.
 | `.tmux.conf` | `~/.tmux.conf` | tmux config. `install.sh` installs tmux itself. |
 | `authorized_keys` | appended to `~/.ssh/authorized_keys` | Only the keys not already there. |
 
+## tmux
+
+Windows are the tabs, numbered from 1 so that window N sits under key N. Panes count from 1 too.
+
 `make-ctags.sh` builds a `tags` file for a project and skips the usual junk directories.
 
 ## Machine-specific bash settings
@@ -91,9 +95,9 @@ pytest --system   # also runs install.sh for real and checks what it left on the
 ```
 
 The plain run leaves the machine's own config alone. `install.sh` runs with
-`DOTFILES_SKIP_PACKAGES=1` against temp homes, and neovim runs in its own XDG tree with plugins
-cached under `~/.cache/dotfiles-tests`. It needs `python3-pytest`, plus `nvim` and `flake8` for
-the neovim tests and `universal-ctags` for the `make-ctags.sh` test. A missing tool skips its
+`DOTFILES_SKIP_PACKAGES=1` against temp homes, neovim runs in its own XDG tree with plugins
+cached under `~/.cache/dotfiles-tests`, and tmux starts a server on its own socket. It needs `python3-pytest`, plus `nvim` and `flake8` for
+the neovim tests, `tmux` for the tmux tests and `universal-ctags` for the `make-ctags.sh` test. A missing tool skips its
 tests locally and fails them in CI, where `install.sh` should have provided it.
 
 `--system` adds the tests that run `install.sh` unmodified and check the result. nvim comes from

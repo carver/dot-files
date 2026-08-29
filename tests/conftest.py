@@ -204,6 +204,41 @@ class Nvim:
             raise AssertionError(f"no JSON from nvim\nstdout:\n{r.stdout}\nstderr:\n{r.stderr}")
 
 
+class Tmux:
+    """A tmux server on its own socket, started from the repo .tmux.conf, so the machine's
+    own config and sessions are never touched."""
+
+    def __init__(self, socket_name, cwd):
+        self.socket = socket_name
+        self.cwd = cwd
+
+    def run(self, *args, check=True):
+        env = clean_env(self.cwd)
+        r = subprocess.run(["tmux", "-L", self.socket, *args], env=env, cwd=self.cwd,
+                           capture_output=True, text=True)
+        if check and r.returncode != 0:
+            raise AssertionError(f"tmux exited {r.returncode}\nstdout:\n{r.stdout}\nstderr:\n{r.stderr}")
+        return r
+
+    def out(self, *args):
+        return self.run(*args).stdout.strip()
+
+    def lines(self, *args):
+        return self.out(*args).splitlines()
+
+
+@pytest.fixture
+def tmux(tmp_path):
+    """A detached session in a fresh server that has read only the repo .tmux.conf."""
+    require("tmux")
+    t = Tmux(f"dotfiles-test-{os.getpid()}-{tmp_path.name}", tmp_path)
+    t.run("-f", str(REPO / ".tmux.conf"), "new-session", "-d", "-s", "main", "-x", "80", "-y", "24")
+    try:
+        yield t
+    finally:
+        t.run("kill-server", check=False)
+
+
 @pytest.fixture(scope="session")
 def nvim(tmp_path_factory):
     """One isolated nvim for the whole session. The config is a copy of the repo's nvim/
