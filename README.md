@@ -17,8 +17,8 @@ idempotent.
 
 The prefix is `Ctrl-t`, as it was in the `.screenrc` this replaced; `Ctrl-b` is a plain key. Windows are the tabs, along the top of the screen, numbered from 1 so that window N sits under key N, and renumbered when
 one closes so there is never a gap. Panes count from 1 too.
-A new tab (`prefix c`) starts in the current tab's directory. So does a split: `prefix -` puts
-the new pane beside this one, `prefix _` below it. `prefix %` and `prefix "` still work.
+A new tab (`prefix c`) starts in the current tab's directory. So does a split: `prefix v` puts
+the new pane beside this one, `prefix h` below it, as vim's `:vsplit` and `:split` do. `prefix %` and `prefix "` still work.
 `Ctrl-PageUp` and `Ctrl-PageDown` move between tabs with no prefix, the same keys GNOME
 Terminal uses for its own tabs, and `Alt-1` to `Alt-9` jump to that tab. GNOME Terminal grabs
 `Alt-N` for its own tabs first, so where it is installed `install.sh` turns those shortcuts off

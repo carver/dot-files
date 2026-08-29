@@ -62,11 +62,20 @@ def test_the_tabs_sit_at_the_top(tmux):
     assert tmux.out("show-options", "-gv", "status-position") == "top"
 
 
-def test_minus_and_underscore_split_the_pane_in_the_current_directory(tmux):
+def test_v_and_h_split_the_pane_in_the_current_directory(tmux):
+    """v puts the new pane beside this one and h below it, the way vim's :vsplit and :split
+    do. tmux names the split by the direction it cuts, so v is split-window -h."""
+    assert tmux.out("list-keys", "-T", "prefix", "v").split() == \
+        ["bind-key", "-T", "prefix", "v", "split-window", "-h", "-c", "\"#{pane_current_path}\""]
+    assert tmux.out("list-keys", "-T", "prefix", "h").split() == \
+        ["bind-key", "-T", "prefix", "h", "split-window", "-v", "-c", "\"#{pane_current_path}\""]
+
+
+def test_minus_and_underscore_no_longer_split(tmux):
+    # - is back to tmux's default, deleting the newest paste buffer; _ has no binding
     assert tmux.out("list-keys", "-T", "prefix", "-").split() == \
-        ["bind-key", "-T", "prefix", "-", "split-window", "-h", "-c", "\"#{pane_current_path}\""]
-    assert tmux.out("list-keys", "-T", "prefix", "_").split() == \
-        ["bind-key", "-T", "prefix", "_", "split-window", "-v", "-c", "\"#{pane_current_path}\""]
+        ["bind-key", "-T", "prefix", "-", "delete-buffer"]
+    assert tmux.run("list-keys", "-T", "prefix", "_", check=False).returncode == 1
 
 
 def test_alt_n_jumps_to_tab_n(tmux):
