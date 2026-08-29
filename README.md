@@ -17,7 +17,8 @@ idempotent.
 
 Windows are the tabs, along the top of the screen, numbered from 1 so that window N sits under key N, and renumbered when
 one closes so there is never a gap. Panes count from 1 too.
-A new tab (`prefix c`) starts in the current tab's directory.
+A new tab (`prefix c`) starts in the current tab's directory. So does a split: `prefix -` puts
+the new pane beside this one, `prefix _` below it. `prefix %` and `prefix "` still work.
 `Ctrl-PageUp` and `Ctrl-PageDown` move between tabs with no prefix, the same keys GNOME
 Terminal uses for its own tabs.
 Copy mode (`prefix [`) and the command prompt (`prefix :`) use vi keys.

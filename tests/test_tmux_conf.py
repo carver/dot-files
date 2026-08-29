@@ -60,3 +60,10 @@ def test_scrollback_keeps_fifty_thousand_lines(tmux):
 
 def test_the_tabs_sit_at_the_top(tmux):
     assert tmux.out("show-options", "-gv", "status-position") == "top"
+
+
+def test_minus_and_underscore_split_the_pane_in_the_current_directory(tmux):
+    assert tmux.out("list-keys", "-T", "prefix", "-").split() == \
+        ["bind-key", "-T", "prefix", "-", "split-window", "-h", "-c", "\"#{pane_current_path}\""]
+    assert tmux.out("list-keys", "-T", "prefix", "_").split() == \
+        ["bind-key", "-T", "prefix", "_", "split-window", "-v", "-c", "\"#{pane_current_path}\""]
