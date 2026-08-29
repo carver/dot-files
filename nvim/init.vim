@@ -16,6 +16,9 @@ set number relativenumber
 " Keep undo history on disk (under stdpath('state')), so u still works after reopening a file
 set undofile
 
+" Space is the leader; every <leader> map below is Space plus a key. Set before any of them.
+let mapleader = " "
+
 inoremap jk <ESC>
 vnoremap . :norm.<CR>
 

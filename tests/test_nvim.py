@@ -51,6 +51,10 @@ def test_key_maps(nvim):
                    "m": ":RenderMarkdown toggle<CR>", "M": ":RenderMarkdown preview<CR>"}
 
 
+def test_space_is_the_leader_key(nvim):
+    assert nvim.lua("vim.fn.maparg('<Space>m', 'n')") == ":RenderMarkdown toggle<CR>"
+
+
 def test_overlength_highlight_applies_per_window(nvim, tmp_path):
     f = tmp_path / "a.txt"
     f.write_text("x\n")
