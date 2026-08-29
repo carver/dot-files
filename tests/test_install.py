@@ -13,6 +13,7 @@ LINKS = {
     ".inputrc": REPO / ".inputrc",
     ".profile": REPO / ".profile",
     ".config/nvim": REPO / "nvim",
+    ".tmux.conf": REPO / ".tmux.conf",
 }
 REPO_KEY = (REPO / "authorized_keys").read_text().strip()
 

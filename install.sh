@@ -140,6 +140,9 @@ if [ -e ~/.vim ] || [ -e ~/.viminfo ]; then
   echo "note: vim is no longer managed here; its old plugins and state can go:  rm -rf ~/.vim ~/.viminfo"
 fi
 
+# ---- tmux ------------------------------------------------------------------
+link "$DOTFILE_REPO/.tmux.conf" ~/.tmux.conf
+
 # ---- ssh -------------------------------------------------------------------
 # Append only the keys that aren't already present.
 mkdir -p ~/.ssh
@@ -159,7 +162,8 @@ if [ "${DOTFILES_SKIP_PACKAGES:-}" = 1 ]; then
 fi
 # flake8: linter run by nvim-lint.  xclip: clipboard provider for neovim's 'clipboard'
 # option on X11.  ripgrep: the file lister and grepprg behind ctrlp in init.vim.
-packages=(python3-pip-whl curl openssh-server flake8 xclip ripgrep)
+# tmux: reads the .tmux.conf linked above.
+packages=(python3-pip-whl curl openssh-server flake8 xclip ripgrep tmux)
 # wl-clipboard, the Wayland clipboard provider, only where a compositor answers. neovim
 # picks wl-copy whenever WAYLAND_DISPLAY is set, and in a docker sandbox that variable
 # leaks in from the host with no socket behind it, so every yank ended in a clipboard

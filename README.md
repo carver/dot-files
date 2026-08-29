@@ -10,6 +10,7 @@ idempotent.
 | `.bash_aliases` | `~/.bash_aliases` | Aliases and small functions such as `..`, `mcd`, `n`, `serve` and `freq`. |
 | `.inputrc` | `~/.inputrc`, and a copy at `/root/.inputrc` | Case-insensitive tab completion, in root's shells too. |
 | `nvim/` | `~/.config/nvim` | Neovim config. `init.vim` plus one `lua/carver/` module per feature, plugins via vim-plug. |
+| `.tmux.conf` | `~/.tmux.conf` | tmux config. `install.sh` installs tmux itself. |
 | `authorized_keys` | appended to `~/.ssh/authorized_keys` | Only the keys not already there. |
 
 `make-ctags.sh` builds a `tags` file for a project and skips the usual junk directories.

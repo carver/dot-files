@@ -34,7 +34,7 @@ def test_install_provisions_the_machine():
         assert Path(nvim).resolve() == Path("/opt/nvim/bin/nvim")
     assert subprocess.run(["dpkg", "-s", "neovim"], capture_output=True).returncode != 0, "apt neovim still installed"
     assert subprocess.run(["nvim", "--version"], capture_output=True).returncode == 0
-    for tool in ("flake8", "curl", "xclip", "rg"):
+    for tool in ("flake8", "curl", "xclip", "rg", "tmux"):
         assert shutil.which(tool), tool
 
 
