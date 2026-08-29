@@ -43,3 +43,8 @@ def test_a_new_tab_opens_in_the_current_directory(tmux):
 
 def test_escape_waits_ten_milliseconds(tmux):
     assert tmux.out("show-options", "-sv", "escape-time") == "10"
+
+
+def test_true_color_and_the_tmux_terminfo(tmux):
+    assert tmux.out("show-options", "-gv", "default-terminal") == "tmux-256color"
+    assert "*:RGB" in tmux.lines("show-options", "-sv", "terminal-features")

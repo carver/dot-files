@@ -21,6 +21,7 @@ A new tab (`prefix c`) starts in the current tab's directory.
 `Ctrl-PageUp` and `Ctrl-PageDown` move between tabs with no prefix, the same keys GNOME
 Terminal uses for its own tabs.
 Copy mode (`prefix [`) and the command prompt (`prefix :`) use vi keys.
+True color reaches nvim through `TERM=tmux-256color` and `terminal-features` `*:RGB`.
 Esc inside nvim is not delayed; `escape-time` is 10ms (tmux 3.4 defaults to half a second).
 
 `make-ctags.sh` builds a `tags` file for a project and skips the usual junk directories.
