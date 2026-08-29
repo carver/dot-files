@@ -48,3 +48,7 @@ def test_escape_waits_ten_milliseconds(tmux):
 def test_true_color_and_the_tmux_terminfo(tmux):
     assert tmux.out("show-options", "-gv", "default-terminal") == "tmux-256color"
     assert "*:RGB" in tmux.lines("show-options", "-sv", "terminal-features")
+
+
+def test_the_mouse_works(tmux):
+    assert tmux.out("show-options", "-gv", "mouse") == "on"
