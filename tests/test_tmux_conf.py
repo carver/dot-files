@@ -25,3 +25,8 @@ def test_ctrl_pageup_and_pagedown_switch_tabs_without_the_prefix(tmux):
         ["bind-key", "-T", "root", "C-PPage", "previous-window"]
     assert tmux.out("list-keys", "-T", "root", "C-PageDown").split() == \
         ["bind-key", "-T", "root", "C-NPage", "next-window"]
+
+
+def test_a_new_tab_opens_in_the_current_directory(tmux):
+    assert tmux.out("list-keys", "-T", "prefix", "c").split() == \
+        ["bind-key", "-T", "prefix", "c", "new-window", "-c", '"#{pane_current_path}"']
