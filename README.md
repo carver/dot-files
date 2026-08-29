@@ -15,7 +15,7 @@ idempotent.
 
 ## tmux
 
-Windows are the tabs, numbered from 1 so that window N sits under key N, and renumbered when
+Windows are the tabs, along the top of the screen, numbered from 1 so that window N sits under key N, and renumbered when
 one closes so there is never a gap. Panes count from 1 too.
 A new tab (`prefix c`) starts in the current tab's directory.
 `Ctrl-PageUp` and `Ctrl-PageDown` move between tabs with no prefix, the same keys GNOME

@@ -56,3 +56,7 @@ def test_the_mouse_works(tmux):
 
 def test_scrollback_keeps_fifty_thousand_lines(tmux):
     assert tmux.out("show-options", "-gv", "history-limit") == "50000"
+
+
+def test_the_tabs_sit_at_the_top(tmux):
+    assert tmux.out("show-options", "-gv", "status-position") == "top"
